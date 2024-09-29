@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class item(models.Model):
+class Item(models.Model):
     name = models.CharField(verbose_name='商品名', max_length=100)
     price = models.IntegerField(verbose_name='価格')
     description = models.TextField(verbose_name='説明')
