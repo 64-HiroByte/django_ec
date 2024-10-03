@@ -7,4 +7,4 @@ from shop.models import Item
 # Create your views here.
 class ItemListView(ListView):
     model = Item
-    # template_name = "TEMPLATE_NAME"
+    template_name = "shop/index.html"
