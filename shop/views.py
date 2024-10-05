@@ -10,11 +10,9 @@ class ItemListView(ListView):
     model = Item
     template_name = "shop/item_list.html"
     context_object_name = 'items'
-
-
+    ordering = 'created_at'
 
 
 class ItemDetailView(DetailView):
     model = Item
     template_name = "shop/item_detail.html"
-
