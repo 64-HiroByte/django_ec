@@ -1,14 +1,15 @@
 {% extends 'shop/base.html' %}
 {% load static %}
 
+{% block title %}A子のぼたもち - 商品一覧{% endblock title %}
 
 {% block content %}
 <!-- Header-->
 <header class="bg-dark py-5">
     <div class="container px-4 px-lg-5 my-5">
         <div class="text-center text-white">
-            <h1 class="display-4 fw-bolder">Shop in style</h1>
-            <p class="lead fw-normal text-white-50 mb-0">With this shop hompeage template</p>
+            <h1 class="display-4 fw-bolder">KAEROUKA</h1>
+            <p class="lead fw-normal text-white-50 mb-0">素朴でどこか懐かしい味をあなたに</p>
         </div>
     </div>
 </header>
@@ -26,7 +27,7 @@
                         {% if item.image %}
                             <img class="card-img-top" src="{{ item.image.url }}" alt="{{ item.name }}" />
                         {% else %}
-                            <img class="card-img-top" src="/media/images/now_printing.jpg" alt="..." />
+                            <img class="card-img-top" src="/media/images/now_printing.jpg" alt="画像準備中" />
                         {% endif %}
                         
                         <!-- Product details-->
