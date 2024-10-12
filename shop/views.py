@@ -28,4 +28,4 @@ class ItemDetailView(DetailView):
 
         # 関連商品の取得（ただし、現在の商品は除く）
         context['related_items'] = Item.objects.exclude(id=item.id).order_by('-created_at')[:get_related_item_count]  # 登録日が最新のもの1点
-        return contex）
+        return context
