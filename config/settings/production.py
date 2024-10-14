@@ -5,7 +5,7 @@ env = environ.Env()
 
 SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['.heroku.com']
 
