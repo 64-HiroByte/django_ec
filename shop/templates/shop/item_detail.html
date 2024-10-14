@@ -12,7 +12,7 @@
                 {% if item.image %}
                     <img class="card-img-top mb-5 mb-md-0" src="{{ item.image.url }}" alt="{{ item.name }}" />
                 {% else %}
-                    <img class="card-img-top mb-5 mb-md-0" src="/media/images/now_printing.jpg" alt="..." />
+                    <img class="card-img-top mb-5 mb-md-0" src="{% static '/images/now_printing.jpg' %}" alt="画像準備中" />
                 {% endif %}
             </div>
             <div class="col-md-6">

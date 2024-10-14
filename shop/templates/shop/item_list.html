@@ -27,7 +27,7 @@
                         {% if item.image %}
                             <img class="card-img-top" src="{{ item.image.url }}" alt="{{ item.name }}" />
                         {% else %}
-                            <img class="card-img-top" src="/media/images/now_printing.jpg" alt="画像準備中" />
+                            <img class="card-img-top" src="{% static '/images/now_printing.jpg' %}" alt="画像準備中" />
                         {% endif %}
                         
                         <!-- Product details-->
