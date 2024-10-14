@@ -7,7 +7,7 @@ SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['.heroku.com']
+ALLOWED_HOSTS = ['.herokapp.com']
 
 DATABASES = {
     "default": env.db(),
