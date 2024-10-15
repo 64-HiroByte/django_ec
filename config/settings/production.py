@@ -12,11 +12,3 @@ ALLOWED_HOSTS = ['.herokuapp.com']
 DATABASES = {
     "default": env.db(),
 }
-
-MIDDLEWARE.insert(1, 'whitenoise.middleware.WhiteNoiseMiddleware')
-
-STORAGES = {
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
