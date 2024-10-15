@@ -5,8 +5,8 @@ psycopg==3.1.12
 # 以下のパッケージを追加した
 pillow==10.4.0
 # Herokuへのデプロイに必要なパッケージ
-gunicorn  #23.0.0
-whitenoise  #6.7.0
+gunicorn==23.0.0
+whitenoise==6.7.0
 # 画像アップロードのために必要なパッケージ（どちらか）
-cloudinary  #1.41.0
+# cloudinary  #1.41.0
 # django-cloudinary-strage  #0.3.0　しばらく更新されていないから使わないことにした
