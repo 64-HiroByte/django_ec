@@ -22,16 +22,17 @@
             <h3>whotenoise</h3>
             <img  src="{% static '/images/now_printing.jpg' %}" alt="画像準備中" />
 
-            {% comment %} {% for item in items %}
+            {% for item in items %}
             <div class="col mb-5">
                 <a href="{% url 'item-detail' item.pk %}">
-                <div class="card h-100">
+                    <div class="card h-100">
                         <!-- Product image-->
-                        {% if item.image %}
+                        <img class="card-img-top" src="{% static '/images/now_printing.jpg' %}" alt="画像準備中" />
+                        {% comment %} {% if item.image %}
                             <img class="card-img-top" src="{{ item.image.url }}" alt="{{ item.name }}" />
                         {% else %}
                             <img class="card-img-top" src="{% static '/images/now_printing.jpg' %}" alt="画像準備中" />
-                        {% endif %}
+                        {% endif %} {% endcomment %}
                         
                         <!-- Product details-->
                         <div class="card-body p-4">
@@ -51,7 +52,7 @@
                     </div>
                 </a>
             </div>
-            {% endfor %} {% endcomment %}
+            {% endfor %}
 
         </div>
     </div>
