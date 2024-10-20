@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include('shop.urls')),
 ]
 
+# この設定が本当に必要なのか調べる 設定しなくても大丈夫な気がする（2024.10.20)
 if settings.DEBUG:
     urlpatterns += static(
         settings.MEDIA_URL, document_root=settings.MEDIA_ROOT

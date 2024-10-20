@@ -1,7 +1,7 @@
 {% extends 'shop/base.html' %}
 {% load static %}
 
-{% block title %}A子のぼたもち - 商品詳細{% endblock title %}
+{% block title %} - 商品詳細{% endblock title %}
 
 {% block content %}
 <!-- Product section-->
@@ -12,7 +12,7 @@
                 {% if item.image %}
                     <img class="card-img-top mb-5 mb-md-0" src="{{ item.image.url }}" alt="{{ item.name }}" />
                 {% else %}
-                    <img class="card-img-top mb-5 mb-md-0" src="{% static '/images/now_printing.jpg' %}" alt="画像準備中" />
+                    <img class="card-img-top mb-5 mb-md-0" src="https://res.cloudinary.com/hip3gt8kc/image/upload/v1729417343/media/images/now_printing_ksicue.jpg" alt="画像準備中" />
                 {% endif %}
             </div>
             <div class="col-md-6">
