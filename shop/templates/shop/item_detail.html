@@ -42,28 +42,30 @@
             
             {% for related_item in related_items %}
             <div class="col mb-5">
-                <div class="card h-100">
-                    <!-- Product image-->
-                    {% if related_item.image %}
-                        <img class="card-img-top" src="{{ related_item.image.url }}" alt="{{ related_item.name }}" />
-                    {% else %}
-                        <img class="card-img-top" src="/media/images/now_printing.jpg" alt="画像準備中" />
-                    {% endif %}
-                        
-                    <!-- Product details-->
-                    <div class="card-body p-4">
-                        <div class="text-center">
-                            <!-- Product name-->
-                            <h5 class="fw-bolder">{{ related_item.name }}</h5>
-                            <!-- Product price-->
-                            {{ related_item.price }} 円
+                <a href="{% url 'item-detail' related_item.pk %}">
+                    <div class="card h-100">
+                        <!-- Product image-->
+                        {% if related_item.image %}
+                            <img class="card-img-top" src="{{ related_item.image.url }}" alt="{{ related_item.name }}" />
+                        {% else %}
+                            <img class="card-img-top" src="https://res.cloudinary.com/hip3gt8kc/image/upload/v1729417343/media/images/now_printing_ksicue.jpg" alt="画像準備中" />
+                        {% endif %}
+                            
+                        <!-- Product details-->
+                        <div class="card-body p-4">
+                            <div class="text-center">
+                                <!-- Product name-->
+                                <h5 class="fw-bolder">{{ related_item.name }}</h5>
+                                <!-- Product price-->
+                                {{ related_item.price }} 円
+                            </div>
+                        </div>
+                        <!-- Product actions-->
+                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
                         </div>
                     </div>
-                    <!-- Product actions-->
-                    <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                        <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">View options</a></div>
-                    </div>
-                </div>
+                </a>
             </div>
             {% endfor %}
 

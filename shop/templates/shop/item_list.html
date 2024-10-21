@@ -26,8 +26,6 @@
                         {% if item.image %}
                             <img class="card-img-top" src="{{ item.image.url }}" alt="{{ item.name }}" />
                         {% else %}
-                            {% comment %} 画像のない商品画像もcloudinaryから持ってくる {% endcomment %}
-                            {% comment %} <img class="card-img-top" src="{% static '/images/now_printing.jpg' %}" alt="画像準備中" /> {% endcomment %}
                             <img class="card-img-top" src="https://res.cloudinary.com/hip3gt8kc/image/upload/v1729417343/media/images/now_printing_ksicue.jpg" alt="画像準備中" />
                         {% endif %}
                         <!-- Product details-->
