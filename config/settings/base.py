@@ -1,3 +1,6 @@
+"""
+本番環境とローカル環境共通で適用される設定内容
+"""
 import environ
 
 from pathlib import Path
@@ -21,7 +24,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # 追加
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -86,9 +89,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # 追加
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-# MEDIA_ROOT = BASE_DIR / 'media/'  # local.pyに転記
 MEDIA_URL = '/media/'
 
 # ストレージ設定

@@ -1,3 +1,6 @@
+"""
+ローカル環境で適用される設定内容
+"""
 from .base import *
 
 
@@ -14,10 +17,8 @@ DATABASES = {
     "default": env.db(),
 }
 
+# ローカル環境のみ設定
 INSTALLED_APPS.insert(0, 'whitenoise.runserver_nostatic')
-
-# MEDIA_ROOTの設定不要？
-# MEDIA_ROOT = BASE_DIR / 'media_local/'  # base.pyから転記 'media/' ==> 'media_local/'
 
 CLOUDINARY_STORAGE  = {
     'CLOUD_NAME':'hip3gt8kc',

@@ -1,3 +1,6 @@
+"""
+本番環境(Heroku）で適用される設定内容
+"""
 from .base import *
 
 
@@ -5,7 +8,7 @@ env = environ.Env()
 
 SECRET_KEY = env("SECRET_KEY")
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['.herokuapp.com']
 
