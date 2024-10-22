@@ -2,6 +2,9 @@ from django.db import models
 
 # Create your models here.
 class Item(models.Model):
+    class Meta:
+        db_table = 'items'
+    
     name = models.CharField(verbose_name='商品名', max_length=100)
     price = models.IntegerField(verbose_name='価格')
     image = models.ImageField(verbose_name='商品画像', upload_to='images/', blank=True, null=True)
