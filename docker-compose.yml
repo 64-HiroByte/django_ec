@@ -21,6 +21,8 @@ services:
   web:
     build: .
     command: python manage.py runserver 0.0.0.0:3000
+    environment:
+      - DJANGO_SETTINGS_MODULE=config.settings.local  # ローカル環境用設定
     volumes:
       - .:/code
     ports:

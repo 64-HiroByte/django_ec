@@ -2,3 +2,7 @@
 *.log
 *.pyc
 __pycache__/
+
+# 20241013-追記
+.DS_store
+db.sqlite3
