@@ -6,6 +6,8 @@ import environ
 from pathlib import Path
 
 
+env = environ.Env()
+
 # BASE_DIRの定義
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 

@@ -4,7 +4,7 @@
 from .base import *
 
 
-env = environ.Env()
+# env = environ.Env()
 
 SECRET_KEY = env("SECRET_KEY")
 
