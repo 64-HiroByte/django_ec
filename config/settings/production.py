@@ -4,8 +4,6 @@
 from .base import *
 
 
-# env = environ.Env()
-
 SECRET_KEY = env("SECRET_KEY")
 
 DEBUG = False
@@ -17,7 +15,7 @@ DATABASES = {
 }
 
 CLOUDINARY_STORAGE  = {
-    'CLOUD_NAME':'hip3gt8kc',
+    'CLOUD_NAME': env('CLOUD_NAME'),
     'API_KEY': env('CLOUDINARY_API_KEY'),
     'API_SECRET': env('CLOUDINARY_API_SECRET')
 }

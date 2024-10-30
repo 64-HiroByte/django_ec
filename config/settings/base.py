@@ -22,6 +22,7 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'cloudinary',
     'shop.apps.ShopConfig',
+    'item_management.apps.ItemManagementConfig',
 ]
 
 MIDDLEWARE = [
