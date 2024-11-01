@@ -22,6 +22,7 @@ from django.urls import path
 from django.views.generic.base import TemplateView
 
 urlpatterns = [
+    path('admin/items/', include('item_management.urls')),
     path('admin/', admin.site.urls),
     path('hello/', TemplateView.as_view(template_name='hello.html')),
     path('', include('shop.urls')),
