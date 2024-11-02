@@ -1,1 +1,18 @@
-<h1>Hello</h1>
+<h1>商品管理</h1>
+<div class="container">
+    {% for item in items %}
+        <p>{{ item.pk}}</p>
+        <p>{{ item.name }}</p>
+        <p>{{ item.price }}</p>
+        <p>{{ item.description}}</p>
+        <p>{{ item.updated_at }}</p>
+        <p>{{ item.created_at }}</p>
+    {% comment %}
+        {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" />
+        {% else %}
+            <img src="https://res.cloudinary.com/hip3gt8kc/image/upload/v1729417343/media/images/now_printing_ksicue.jpg" alt="画像準備中" />
+        {% endif %}
+    {% endcomment %}
+    {% endfor %}
+</div>
