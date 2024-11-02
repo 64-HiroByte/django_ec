@@ -1,18 +1,38 @@
-<h1>商品管理</h1>
-<div class="container">
-    {% for item in items %}
-        <p>{{ item.pk}}</p>
-        <p>{{ item.name }}</p>
-        <p>{{ item.price }}</p>
-        <p>{{ item.description}}</p>
-        <p>{{ item.updated_at }}</p>
-        <p>{{ item.created_at }}</p>
-    {% comment %}
-        {% if item.image %}
+{% extends "item_management/base.html" %}
+
+{% block pagetitle %}商品一覧{% endblock pagetitle %}
+
+{% block content %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">商品名</th>
+            <th scope="col">価格</th>
+            <th scope="col">説明</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.pk}}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.description}}</td>
+            <td></td>
+        </tr>
+        {% comment %}
+            <p>{{ item.updated_at }}</p>
+            <p>{{ item.created_at }}</p>
+            {% if item.image %}
             <img src="{{ item.image.url }}" alt="{{ item.name }}" />
-        {% else %}
+            {% else %}
             <img src="https://res.cloudinary.com/hip3gt8kc/image/upload/v1729417343/media/images/now_printing_ksicue.jpg" alt="画像準備中" />
-        {% endif %}
-    {% endcomment %}
-    {% endfor %}
-</div>
+            {% endif %}
+        {% endcomment %}
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}
