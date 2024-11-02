@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.views.generic import CreateView
 from django.views.generic import DeleteView
 from django.views.generic import ListView
+from django.views.generic import UpdateView
 
 from shop.models import Item
 
@@ -26,4 +27,11 @@ class ItemCreateView(CreateView):
 class ItemDeleteView(DeleteView):
     model = Item
     template_name = "item_management/item_delete.html"
+    success_url = reverse_lazy('management-item-list')
+
+
+class ItemUpdateView(UpdateView):
+    model = Item
+    template_name = "item_management/item_form.html"
+    fields = '__all__'
     success_url = reverse_lazy('management-item-list')
