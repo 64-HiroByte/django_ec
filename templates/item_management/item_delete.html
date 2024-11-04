@@ -1,12 +1,18 @@
 {% extends "item_management/base.html" %}
+{% load static %}
 
 {% block pagetitle %}登録商品削除{% endblock pagetitle %}
 
 {% block content %}
-    <form action="" method="post">
-    {% csrf_token %}
-    <h2>{{ item.pk }} {{ item.name }}</h2>
-    <p>この商品を削除しても良いですか？</p>
-        <input type="submit" value="削除">
-    </form>
+<form action="" method="post">
+{% csrf_token %}
+    <div class="d-grid gap-2 col-8 mx-auto">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{% url 'management-item-list' %}" class="btn btn-outline-dark col-3">前の画面に戻る</a>
+        </div>
+        <h2># {{ item.pk }} {{ item.name }}</h2>
+        <p>この商品を削除しても良いですか？</p>
+        <input class="btn btn-danger" type="submit" value="削除">
+    </div>
+</form>
 {% endblock content %}
