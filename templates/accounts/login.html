@@ -1,0 +1,20 @@
+{% extends "item_management/base.html" %}
+{% load static %}
+
+{% block content %}
+<form action="" method="post">
+{% csrf_token %}
+    <div class="d-grid gap-2 col-8 mx-auto">
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <a href="{% url 'item-list' %}" class="btn btn-outline-dark col-3">前の画面に戻る</a>
+        </div>
+
+        <table class="table">
+            {{ form.as_table }}
+        </table>
+        <div class="d-grid gap-2">
+            <input class="btn btn-outline-success" type="submit" value="ログイン">
+        </div>
+    </div>
+</form>
+{% endblock content %}
