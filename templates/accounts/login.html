@@ -5,9 +5,9 @@
 <form action="" method="post">
 {% csrf_token %}
     <div class="d-grid gap-2 col-8 mx-auto">
-        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        {% comment %} <div class="d-grid gap-2 d-md-flex justify-content-md-end">
             <a href="{% url 'item-list' %}" class="btn btn-outline-dark col-3">前の画面に戻る</a>
-        </div>
+        </div> {% endcomment %}
 
         <table class="table">
             {{ form.as_table }}
