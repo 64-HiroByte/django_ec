@@ -114,6 +114,7 @@ STORAGES = {
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# login/logout redirect
+# login/logout
+LOGIN_URL = 'login'
 LOGOUT_REDIRECT_URL = 'item-list'
 LOGIN_REDIRECT_URL = 'item-list'
