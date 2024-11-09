@@ -4,7 +4,6 @@
 from .base import *
 
 
-env = environ.Env()
 environ.Env.read_env(env_file=str(BASE_DIR) + "/.env")
 
 SECRET_KEY = env("SECRET_KEY")
@@ -21,7 +20,10 @@ DATABASES = {
 INSTALLED_APPS.insert(0, 'whitenoise.runserver_nostatic')
 
 CLOUDINARY_STORAGE  = {
-    'CLOUD_NAME':'hip3gt8kc',
+    'CLOUD_NAME': env('CLOUD_NAME'),
     'API_KEY': env('CLOUDINARY_API_KEY'),
     'API_SECRET': env('CLOUDINARY_API_SECRET')
 }
+
+# basic認証
+BASICAUTH_USERS = {env('BASICAUTH_USER_NAME'): env('BASICAUTH_PASSWORD')}

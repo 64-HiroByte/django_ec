@@ -1,0 +1,47 @@
+{% extends "item_management/base.html" %}
+{% load static %}
+
+{% block pagetitle %}商品一覧{% endblock pagetitle %}
+
+{% block content %}
+<table class="table table-hover">
+    <div class="d-grid gap-2">
+        <a href="{% url 'item-register' %}" class="btn btn-outline-primary btn-lg mb-3">新規登録</a>
+    </div>
+    <thead>
+        <tr>
+            <th scope="col">ID</th>
+            <th scope="col">商品名</th>
+            <th scope="col">価格</th>
+            <th scope="col">説明</th>
+            <th scope="col">更新日</th>
+            <th scope="col">登録日</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.pk}}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.price }}</td>
+            <td>{{ item.description | truncatechars:20 }}</td>
+            <td>{{ item.updated_at | date:"Y-m-d H:i"}}</td>
+            <td>{{ item.created_at | date:"Y-m-d" }}</td>
+            <td>
+                <a href="{% url 'item-edit' item.pk %}" class="btn btn-success"><i class="bi bi-pencil-square"></i> 編集</a>
+                <a href="{% url 'item-delete' item.pk %}" class="btn btn-danger"><i class="bi bi-trash"></i> 削除</a>
+            </td>
+            {% comment %}
+            {% if item.image %}
+            <img src="{{ item.image.url }}" alt="{{ item.name }}" />
+            {% else %}
+            <img src="https://res.cloudinary.com/hip3gt8kc/image/upload/v1729417343/media/images/now_printing_ksicue.jpg" alt="画像準備中" />
+            {% endif %}
+            {% endcomment %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

@@ -6,6 +6,8 @@ import environ
 from pathlib import Path
 
 
+env = environ.Env()
+
 # BASE_DIRの定義
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
@@ -20,6 +22,8 @@ INSTALLED_APPS = [
     'cloudinary_storage',
     'cloudinary',
     'shop.apps.ShopConfig',
+    'item_management.apps.ItemManagementConfig',
+    'accounts.apps.AccountsConfig'
 ]
 
 MIDDLEWARE = [
@@ -109,3 +113,8 @@ STORAGES = {
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# login/logout
+LOGIN_URL = 'login'
+LOGOUT_REDIRECT_URL = 'item-list'
+LOGIN_REDIRECT_URL = 'item-list'
