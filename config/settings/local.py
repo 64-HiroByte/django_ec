@@ -27,3 +27,19 @@ CLOUDINARY_STORAGE  = {
 
 # basic認証
 BASICAUTH_USERS = {env('BASICAUTH_USER_NAME'): env('BASICAUTH_PASSWORD')}
+
+
+# for django-debug-toolbar
+def show_toolbar(request):
+    return True
+
+
+INSTALLED_APPS += [
+    'debug_toolbar',
+]
+MIDDLEWARE += [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+]
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+}
