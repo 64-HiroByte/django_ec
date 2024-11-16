@@ -19,7 +19,7 @@ class Cart:
         '''
         カートに商品を追加
         '''
-        cart_item = CartItem(id=item.pk, name=item.name, price=item.price)
+        cart_item = CartItem(id=item.id, name=item.name, price=item.price)
         self.items_in_cart.append(cart_item)
 
     def clear(self):
