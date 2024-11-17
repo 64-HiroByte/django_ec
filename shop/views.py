@@ -37,10 +37,10 @@ class ItemDetailView(DetailView):
 CART_SESSION_KEY = 'cart'
 
 class AddToCartView(RedirectView):
-    url = reverse_lazy('item_list')
+    url = reverse_lazy('item-list')
 
     def get(self, request, *args, **kwargs):
-        item = Item.objects.get(id=kwargs['item_pk'])
+        item = Item.objects.get(pk=kwargs['pk'])
 
         cart = Cart.create_from_session(request.session, CART_SESSION_KEY)
         cart.add_item(item)
