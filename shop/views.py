@@ -1,3 +1,4 @@
+from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
@@ -5,9 +6,11 @@ from django.views.generic import ListView
 from django.views.generic import RedirectView
 
 from shop.cart import Cart
+from shop.forms import AddToCartForm
 from shop.models import Item
 
 
+CART_SESSION_KEY = 'cart'
 # Create your views here.
 class ItemListView(ListView):
     model = Item
@@ -30,11 +33,21 @@ class ItemDetailView(DetailView):
         get_related_item_count = 4
 
         # 関連商品の取得（ただし、現在の商品は除く）
-        context['related_items'] = Item.objects.exclude(id=item.id).order_by('-created_at')[:get_related_item_count] 
+        context['related_items'] = Item.objects.exclude(id=item.id).order_by('-created_at')[:get_related_item_count]
+        
+        context['form'] = AddToCartForm()
+        # print(context)
         return context
+    
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        form = AddToCartForm(request.POST)
+        if form.is_valid():
+            quantity = form.cleaned_data['quantity']
+            # カートに商品を追加する処理
+            
+            return redirect('add-to-cart')
 
-
-CART_SESSION_KEY = 'cart'
 
 class AddToCartView(RedirectView):
     url = reverse_lazy('item-list')
