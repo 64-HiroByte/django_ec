@@ -57,11 +57,11 @@ class Cart:
             cart = cls()
         return cart
     
-    def save_to_session(self, session_data, key):
+    def save_to_session(self, session_data, session_key):
         '''
         カートの情報をセッションに保存
         '''
-        session_data[key] = self.to_dict()
+        session_data[session_key] = self.to_dict()
     
     def __str__(self):
         return f'Cart:{self.items_in_cart}'
