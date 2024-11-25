@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.urls import reverse_lazy
@@ -17,6 +18,12 @@ class ItemListView(ListView):
     template_name = "shop/item_list.html"
     context_object_name = 'items'
     ordering = 'created_at'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['quantities_in_cart']= Cart.get_quantities_in_cart(self.request.session, CART_SESSION_KEY)
+        print(context)
+        return context
 
 
 class ItemDetailView(DetailView):
@@ -53,10 +60,13 @@ class AddToCartView(RedirectView):
     url = reverse_lazy('item-list')
 
     def get(self, request, *args, **kwargs):
-        item = Item.objects.get(pk=kwargs['pk'])
-
+        # shop.models.Itemからpkで商品を指定、インスタンス化
+        item = get_object_or_404(Item, pk=kwargs['pk'])
+        # item = Item.objects.get(pk=kwargs['pk'])
+        
+        # ここからカートに関する処理
         cart = Cart.create_from_session(request.session, CART_SESSION_KEY)
         cart.add_item(item)
-        
         cart.save_to_session(request.session, CART_SESSION_KEY)
+        
         return super().get(request, *args, **kwargs)
