@@ -53,11 +53,11 @@ class ItemDetailView(DetailView):
             quantity = form.cleaned_data['quantity']
             # カートに商品を追加する処理
             
-            return redirect('add-to-cart')
+            return redirect('shop:add-to-cart')
 
 
 class AddToCartView(RedirectView):
-    url = reverse_lazy('item-list')
+    url = reverse_lazy('shop:item-list')
 
     def get(self, request, *args, **kwargs):
         # shop.models.Itemからpkで商品を指定、インスタンス化

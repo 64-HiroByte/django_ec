@@ -42,7 +42,7 @@
             
             {% for related_item in related_items %}
             <div class="col mb-5">
-                <a href="{% url 'item-detail' related_item.pk %}">
+                <a href="{% url 'shop:item-detail' related_item.pk %}">
                     <div class="card h-100">
                         <!-- Product image-->
                         {% if related_item.image %}
