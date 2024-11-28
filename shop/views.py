@@ -6,7 +6,7 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import RedirectView
 
-from shop.cart import Cart
+from cart.cart import Cart
 from shop.forms import AddToCartForm
 from shop.models import Item
 
