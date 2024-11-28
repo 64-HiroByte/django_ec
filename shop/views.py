@@ -22,7 +22,6 @@ class ItemListView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['quantities_in_cart']= Cart.get_quantities_in_cart(self.request.session, CART_SESSION_KEY)
-        print(context)
         return context
 
 
@@ -38,22 +37,32 @@ class ItemDetailView(DetailView):
         item = self.get_object()
         # 表示させる関連商品の数
         get_related_item_count = 4
-
         # 関連商品の取得（ただし、現在の商品は除く）
-        context['related_items'] = Item.objects.exclude(id=item.id).order_by('-created_at')[:get_related_item_count]
+        context['related_items'] = Item.objects.exclude(pk=item.pk).order_by('-created_at')[:get_related_item_count]
+        # カート内の商品数の取得
+        context['quantities_in_cart']= Cart.get_quantities_in_cart(self.request.session, CART_SESSION_KEY)
         
         context['form'] = AddToCartForm()
-        # print(context)
         return context
     
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = AddToCartForm(request.POST)
+        # 入力された数量のバリデーション
         if form.is_valid():
             quantity = form.cleaned_data['quantity']
             # カートに商品を追加する処理
-            
-            return redirect('shop:add-to-cart')
+            cart = Cart.create_from_session(request.session, CART_SESSION_KEY)
+            cart.add_item(item=self.object, quantity=quantity)
+            cart.save_to_session(request.session, CART_SESSION_KEY)
+            # 1. 商品詳細ページにリダイレクトする場合
+            return redirect('shop:item-detail', pk=self.object.pk)
+            # 2. 商品一覧ページにリダイレクトする場合
+            # return redirect('shop:item-list')
+        else:
+            context = self.get_context_data(**kwargs)
+            print(context)
+            return self.render_to_response(context)
 
 
 class AddToCartView(RedirectView):
