@@ -55,6 +55,7 @@ class ItemDetailView(DetailView):
             cart = Cart.create_from_session(request.session, CART_SESSION_KEY)
             cart.add_item(item=self.object, quantity=quantity)
             cart.save_to_session(request.session, CART_SESSION_KEY)
+            print(f'合計金額: {cart.total_price}円')
             # 1. 商品詳細ページにリダイレクトする場合
             return redirect('shop:item-detail', pk=self.object.pk)
             # 2. 商品一覧ページにリダイレクトする場合

@@ -19,6 +19,15 @@ class CartItem:
 class Cart:
     items_in_cart: list[CartItem]= dataclasses.field(default_factory=list)
     
+    @property
+    def total_price(self):
+        total_price = 0
+        for item_in_cart in self.items_in_cart:
+            total_price += item_in_cart.sub_total
+        return total_price
+        # 上記内容は以下のリスト内包表記でもいいが、可読性を向上させるためにループ処理とした
+        # return sum(item_in_cart.sub_total for item_in_cart in self.items_in_cart)
+    
     def add_item(self, item, quantity=1):
         '''
         カートに商品を追加
