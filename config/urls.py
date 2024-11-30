@@ -27,6 +27,7 @@ urlpatterns = [
     path('hello/', TemplateView.as_view(template_name='hello.html')),
     path('', include('shop.urls')),
     path('accounts/', include('accounts.urls')),
+    path('cart/', include('cart.urls')),
 ]
 
 # この設定が本当に必要なのか調べる 設定しなくても大丈夫な気がする（2024.10.20)
