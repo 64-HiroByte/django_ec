@@ -42,6 +42,12 @@ class Cart:
             pk=item.pk, name=item.name, price=item.price, quantity=quantity
             )
         self.items_in_cart.append(cart_item)
+    
+    def delete_item(self, item_pk):
+        for item_in_cart in self.items_in_cart:
+            if item_in_cart.pk == item_pk:
+                self.items_in_cart.remove(item_in_cart)
+                return
 
     def clear(self):
         '''

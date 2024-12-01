@@ -13,9 +13,9 @@ CART_SESSION_KEY = 'cart'
 # Create your views here.
 class CheckoutListView(TemplateView):
     # model = Item
-    template_name = "cart/checkout.html"
     # context_object_name = 'items'
     # ordering = 'created_at'
+    template_name = "cart/checkout.html"
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -25,4 +25,15 @@ class CheckoutListView(TemplateView):
         context['items_in_cart'] = cart.items_in_cart
         context['total_price'] = cart.total_price
         return context
+    
+    def post(self, request, *args, **kwargs):
+        item_pk = request.POST.get('item_pk')
+        if item_pk:
+            item_pk = int(item_pk)
+            # カートから選択した商品を削除する処理
+            cart = Cart.create_from_session(request.session, CART_SESSION_KEY)
+            cart.delete_item(item_pk)
+            cart.save_to_session(request.session, CART_SESSION_KEY)
+        
+        return redirect('cart:checkout')
 

@@ -42,11 +42,12 @@
                         </li>
                     </ul>
                     <form class="d-flex gap-2">
-                        <button class="btn btn-outline-dark" type="submit">
+                        {% comment %} <button class="btn btn-outline-dark" type="submit"> {% endcomment %}
+                            <a href="{% url 'cart:checkout' %}" class="btn btn-outline-dark">
                             <i class="bi-cart-fill me-1"></i>
                             Cart
-                            <span class="badge bg-dark text-white ms-1 rounded-pill">{{ quantities_in_cart }}</span>
-                        </button>
+                            <span class="badge bg-dark text-white ms-1 rounded-pill">{{ quantities_in_cart }}</span></a>
+                        {% comment %} </button> {% endcomment %}
                         {% if user.is_authenticated %}
                         <a href="{% url 'accounts:logout' %}" class="btn btn-outline-dark">
                             <i class="bi bi-box-arrow-left me-1"></i>

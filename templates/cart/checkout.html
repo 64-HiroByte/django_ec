@@ -28,7 +28,12 @@
                         </div>
                         <div>
                         <span class="text-body-secondary me-2">¥ {{ item_in_cart.sub_total | intcomma }}</span>
-                        <a href="#" class="btn btn-danger"><i class="bi bi-trash"></i></a>
+                        <form method="post" action="{% url 'cart:checkout' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="item_pk" value="{{ item_in_cart.pk }}">
+                            <button class="btn btn-danger" type="submit"><i class="bi bi-trash"></i></button>
+                        </form>
+                        {% comment %} <a href="#" class="btn btn-danger"><i class="bi bi-trash"></i></a> {% endcomment %}
                         </div>
                     </li>
                     {% endfor %}
