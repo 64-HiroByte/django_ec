@@ -1,5 +1,6 @@
 {% extends "item_management/base.html" %}
 {% load static %}
+{% load humanize %}
 
 {% block pagetitle %}商品一覧{% endblock pagetitle %}
 
@@ -25,7 +26,7 @@
         <tr>
             <td>{{ item.pk}}</td>
             <td>{{ item.name }}</td>
-            <td>{{ item.price }}</td>
+            <td>{{ item.price | intcomma }}</td>
             <td>{{ item.description | truncatechars:20 }}</td>
             <td>{{ item.updated_at | date:"Y-m-d H:i"}}</td>
             <td>{{ item.created_at | date:"Y-m-d" }}</td>

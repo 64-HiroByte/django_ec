@@ -1,5 +1,6 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %} - 商品詳細{% endblock title %}
 
@@ -19,7 +20,7 @@
                 <div class="small mb-1">SKU: BST-498</div>
                 <h1 class="display-5 fw-bolder">{{ item.name }}</h1>
                 <div class="fs-5 mb-5">
-                    <span>{{ item.price }} 円</span>
+                    <span>{{ item.price | intcomma }} 円</span>
                 </div>
                 <p class="lead">{{ item.description }}</p>
                 <form action="{% url 'shop:item-detail' item.id %}" method="post">
@@ -60,7 +61,7 @@
                                 <!-- Product name-->
                                 <h5 class="fw-bolder">{{ related_item.name }}</h5>
                                 <!-- Product price-->
-                                {{ related_item.price }} 円
+                                {{ related_item.price | intcomma }} 円
                             </div>
                         </div>
                         <!-- Product actions-->

@@ -1,5 +1,6 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %} - 商品一覧{% endblock title %}
 
@@ -34,7 +35,7 @@
                                 <!-- Product name-->
                                 <h5 class="fw-bolder">{{ item.name }}</h5>
                                 <!-- Product price-->
-                                {{ item.price }} 円
+                                {{ item.price | intcomma }} 円
                             </div>
                         </div>
                         <!-- Product actions-->

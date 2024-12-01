@@ -1,5 +1,6 @@
 {% extends 'shop/base.html' %}
 {% load static %}
+{% load humanize %}
 
 {% block title %} - カート{% endblock title %}
 
@@ -23,10 +24,10 @@
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
                             <h6 class="my-0">{{ item_in_cart.name }}</h6>
-                            <small class="text-body-secondary">¥ {{ item_in_cart.price }} x {{ item_in_cart.quantity }} 点</small>
+                            <small class="text-body-secondary">¥ {{ item_in_cart.price | intcomma }} x {{ item_in_cart.quantity }} 点</small>
                         </div>
                         <div>
-                        <span class="text-body-secondary me-2">¥ {{ item_in_cart.sub_total }}</span>
+                        <span class="text-body-secondary me-2">¥ {{ item_in_cart.sub_total | intcomma }}</span>
                         <a href="#" class="btn btn-danger"><i class="bi bi-trash"></i></a>
                         </div>
                     </li>
@@ -46,7 +47,7 @@
                     <!-- total price -->
                     <li class="list-group-item d-flex justify-content-between">
                         <span>合計</span>
-                        <strong class="me-5">¥ {{ total_price }}</strong>
+                        <strong class="me-5">¥ {{ total_price | intcomma }}</strong>
                     </li>
                 </ul>
 

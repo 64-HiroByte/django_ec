@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.humanize',
     'cloudinary_storage',
     'cloudinary',
     'shop.apps.ShopConfig',
@@ -119,3 +120,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 LOGIN_URL = 'accounts:login'
 LOGOUT_REDIRECT_URL = 'shop:item-list'
 LOGIN_REDIRECT_URL = 'shop:item-list'
+
+# 金額表示: 3桁区切り
+NUMBER_GROUPING = 3
