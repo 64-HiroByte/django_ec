@@ -1,6 +1,5 @@
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView
 from django.views.generic import ListView
@@ -12,7 +11,7 @@ from shop.models import Item
 
 
 CART_SESSION_KEY = 'cart'
-# Create your views here.
+
 class ItemListView(ListView):
     model = Item
     template_name = "shop/item_list.html"
@@ -51,7 +50,8 @@ class ItemDetailView(DetailView):
         # 入力された数量のバリデーション
         if form.is_valid():
             quantity = form.cleaned_data['quantity']
-            # カートに商品を追加する処理
+            
+            # カートに関する処理（カートの生成、商品追加、セッションに保存）
             cart = Cart.create_from_session(request.session, CART_SESSION_KEY)
             cart.add_item(item=self.object, quantity=quantity)
             cart.save_to_session(request.session, CART_SESSION_KEY)
@@ -71,9 +71,8 @@ class AddToCartView(RedirectView):
     def get(self, request, *args, **kwargs):
         # shop.models.Itemからpkで商品を指定、インスタンス化
         item = get_object_or_404(Item, pk=kwargs['pk'])
-        # item = Item.objects.get(pk=kwargs['pk'])
         
-        # ここからカートに関する処理
+        # カートに関する処理（カートの生成、商品追加、セッションに保存）
         cart = Cart.create_from_session(request.session, CART_SESSION_KEY)
         cart.add_item(item)
         cart.save_to_session(request.session, CART_SESSION_KEY)
