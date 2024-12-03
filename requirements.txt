@@ -13,3 +13,6 @@ django-cloudinary-storage==0.3.0
 
 # basic認証
 django-basicauth
+
+# django-debug-toolbar
+django-debug-toolbar

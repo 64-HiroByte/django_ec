@@ -5,7 +5,7 @@ from item_management.views import ItemDeleteView
 from item_management.views import ManagementListView
 from item_management.views import ItemUpdateView
 
-
+app_name = 'item_management'
 urlpatterns = [
     path('', ManagementListView.as_view(), name='management-item-list'),
     path('register/', ItemCreateView.as_view(), name='item-register'),
