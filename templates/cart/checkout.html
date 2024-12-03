@@ -26,18 +26,17 @@
                             <h6 class="my-0">{{ item_in_cart.name }}</h6>
                             <small class="text-body-secondary">¥ {{ item_in_cart.price | intcomma }} x {{ item_in_cart.quantity }} 点</small>
                         </div>
-                        <div>
-                        <span class="text-body-secondary me-2">¥ {{ item_in_cart.sub_total | intcomma }}</span>
-                        <form method="post" action="{% url 'cart:checkout' %}">
+                        <div class="row g-2 align-items-center">
+                            <span class="col-auto text-body-secondary ">¥ {{ item_in_cart.sub_total | intcomma }}</span>
+                            <form  class="col-auto" method="post" action="{% url 'cart:checkout' %}">
                             {% csrf_token %}
-                            <input type="hidden" name="item_pk" value="{{ item_in_cart.pk }}">
-                            <button class="btn btn-danger" type="submit"><i class="bi bi-trash"></i></button>
-                        </form>
-                        {% comment %} <a href="#" class="btn btn-danger"><i class="bi bi-trash"></i></a> {% endcomment %}
+                                <input type="hidden" name="item_pk" value="{{ item_in_cart.pk }}">
+                                <button class="btn btn-danger" type="submit"><i class="bi bi-trash"></i></button>
+                            </form>
                         </div>
                     </li>
                     {% endfor %}
-
+                
                     <!-- promo code -->
                     {% comment %}
                     <li class="list-group-item d-flex justify-content-between bg-body-tertiary">
