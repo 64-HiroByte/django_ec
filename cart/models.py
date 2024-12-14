@@ -26,6 +26,15 @@ class CartItem(models.Model):
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
     
+    def add_item(self, cart, item, quantity=1):
+        cart_item, created = CartItem.objects.get_or_create(
+            cart=cart, item=item, defaults={'quantity': quantity}
+        )
+        if not created:
+            cart_item.quantity += quantity
+            cart_item.save()
+        return cart_item
+    
     def get_sub_total(self):
         return self.item.price * self.quantity
     
