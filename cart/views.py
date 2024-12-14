@@ -13,15 +13,15 @@ from shop.models import Item
 CART_SESSION_KEY = 'cart'
 
 
-class CartCreateview(CreateView):
-    model = Cart
-    fields = []
-    template_name = ''  # のちほど決める
+# class CartCreateview(CreateView):
+#     model = Cart
+#     fields = []
+#     template_name = ''  # のちほど決める
 
-    def form_valid(self, form):
-        cart = form.save()
-        self.request.session[CART_SESSION_KEY] = cart.pk
-        return redirect('')  # 商品をカートに追加するページへリダイレクト
+#     def form_valid(self, form):
+#         cart = form.save()
+#         self.request.session[CART_SESSION_KEY] = cart.pk
+#         return redirect('')  # 商品をカートに追加するページへリダイレクト
 
 
 class AddToCartView(View):
