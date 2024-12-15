@@ -46,10 +46,10 @@ class AddToCartView(View):
         return redirect('')  # リダイレクト先は後で決める
 
 
-"""
 class CheckoutListView(TemplateView):
     template_name = "cart/checkout.html"
     
+"""
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # カート内の商品点数の取得
