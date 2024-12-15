@@ -37,13 +37,14 @@ class AddToCartView(View):
     
     def post(self, request, *args, **kwargs):
         cart = self.get_cart()
-        item_pk = request.POST.get('item_pk')  # 商品一覧ページの数量もフォームを使う
+        # item_pk = request.POST.get('item_pk')  # 商品一覧ページの数量もフォームを使う
+        item_pk = kwargs.get('item_pk')  # 商品一覧ページの数量もフォームを使う
         item = get_object_or_404(Item, pk=item_pk)
         
         quantity = int(request.POST.get('quantity'))
         CartItem.add_item(cart, item, quantity)
         
-        return redirect('')  # リダイレクト先は後で決める
+        return redirect('shop:item-list')  # リダイレクト先は後で決める
 
 
 class CheckoutListView(TemplateView):

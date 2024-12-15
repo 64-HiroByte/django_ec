@@ -41,7 +41,15 @@
                         <!-- Product actions-->
                         <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
                             <div class="text-center">
-                                <a class="btn btn-outline-dark mt-auto" href="{% url 'shop:add-to-cart' item.pk %}">Add to cart</a>
+                                <form action="{% url 'cart:add-item' item.pk %}" method="post">
+                                {% csrf_token %}
+                                    {% comment %} 修正前
+                                    <a class="btn btn-outline-dark mt-auto" href="{% url 'shop:add-to-cart' item.pk %}">Add to cart</a>
+                                    {% endcomment %}
+                                    <input  type="hidden" name="quantity" value="1">
+                                    <button class="btn btn-outline-dark mt-auto" type="submit">
+                                    Add to cart</button>
+                                </form>
                             </div>
                         </div>
                     </div>
