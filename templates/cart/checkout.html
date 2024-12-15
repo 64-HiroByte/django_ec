@@ -14,12 +14,16 @@
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-primary">ショッピングカート</span>
                     <!-- items in cart -->
+                    {% comment %}  修正前コード
                     <span class="badge bg-primary rounded-pill">{{ quantities_in_cart }}</span>
+                    {% endcomment %}
+                    <span class="badge bg-primary rounded-pill">*</span>
                 </h4>
 
                 <!-- item list -->
                 <ul class="list-group mb-3">
                     
+                    {% comment %}  修正前（カートの中身を表示させる）
                     {% for item_in_cart in items_in_cart %}
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
@@ -36,9 +40,10 @@
                         </div>
                     </li>
                     {% endfor %}
+                    {% endcomment %}
                 
                     <!-- promo code -->
-                    {% comment %}
+                    {% comment %}　　プロモコードは実装するまでコメントアウト
                     <li class="list-group-item d-flex justify-content-between bg-body-tertiary">
                         <div class="text-success">
                             <h6 class="my-0">Promo code</h6>
@@ -49,10 +54,12 @@
                     {% endcomment %}
 
                     <!-- total price -->
+                    {% comment %}  修正前のコード
                     <li class="list-group-item d-flex justify-content-between">
                         <span>合計</span>
                         <strong class="me-5">¥ {{ total_price | intcomma }}</strong>
                     </li>
+                    {% endcomment %}
                 </ul>
 
                 <!-- promo code form -->

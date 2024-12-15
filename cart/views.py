@@ -41,6 +41,7 @@ class CheckoutListView(TemplateView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        print(context)
         
         """ 修正前のコード
         # カート内の商品点数の取得"
