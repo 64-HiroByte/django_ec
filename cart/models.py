@@ -40,5 +40,5 @@ class CartItem(models.Model):
         return self.item.price * self.quantity
     
     def __str__(self):
-        return f'cart: {self.cart.pk} - item: {self.item.name}'
+        return f'cart: {self.cart.pk} - item: {self.item.name} x {self.quantity}'
     

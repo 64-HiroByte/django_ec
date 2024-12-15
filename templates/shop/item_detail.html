@@ -23,7 +23,7 @@
                     <span>{{ item.price | intcomma }} 円</span>
                 </div>
                 <p class="lead">{{ item.description }}</p>
-                <form action="{% url 'shop:item-detail' item.id %}" method="post">
+                <form action="{% url 'cart:add-item' item.pk %}" method="post">
                     {% csrf_token %}
                     <div class="d-flex">
                         <input class="form-control text-center me-3" name="quantity" id="inputQuantity" type="number" value="1" min="1" max="100" style="max-width: 5rem" />

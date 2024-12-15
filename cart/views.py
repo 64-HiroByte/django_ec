@@ -13,17 +13,6 @@ from shop.models import Item
 CART_SESSION_KEY = 'cart'
 
 
-# class CartCreateview(CreateView):
-#     model = Cart
-#     fields = []
-#     template_name = ''  # のちほど決める
-
-#     def form_valid(self, form):
-#         cart = form.save()
-#         self.request.session[CART_SESSION_KEY] = cart.pk
-#         return redirect('')  # 商品をカートに追加するページへリダイレクト
-
-
 class AddToCartView(View):
     def get_cart(self):
         cart_pk = self.request.session.get(CART_SESSION_KEY)
@@ -50,18 +39,22 @@ class AddToCartView(View):
 class CheckoutListView(TemplateView):
     template_name = "cart/checkout.html"
     
-"""
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # カート内の商品点数の取得
+        
+        """ 修正前のコード
+        # カート内の商品点数の取得"
         context['quantities_in_cart']= Cart.get_quantities_in_cart(self.request.session, CART_SESSION_KEY)
         # セッションデータからカートを生成
         cart = Cart.create_from_session(self.request.session, CART_SESSION_KEY)
         # contextにカートに関する情報を追加
         context['items_in_cart'] = cart.items_in_cart
         context['total_price'] = cart.total_price
+        """
+        
         return context
     
+"""
     def post(self, request, *args, **kwargs):
         item_pk = request.POST.get('item_pk')
         if item_pk:

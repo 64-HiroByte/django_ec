@@ -28,20 +28,21 @@ class ItemDetailView(DetailView):
     template_name = "shop/item_detail.html"
     context_object_name = 'item'
     
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
 
-    #     # 現在のアイテムを取得
-    #     item = self.get_object()
-    #     # 表示させる関連商品の数
-    #     get_related_item_count = 4
-    #     # 関連商品の取得（ただし、現在の商品は除く）
-    #     context['related_items'] = Item.objects.exclude(pk=item.pk).order_by('-created_at')[:get_related_item_count]
-    #     # カート内の商品数の取得
-    #     context['quantities_in_cart']= Cart.get_quantities_in_cart(self.request.session, CART_SESSION_KEY)
+        # 現在のアイテムを取得
+        item_pk = kwargs.get('item_pk')
+        # 表示させる関連商品の数
+        get_related_item_count = 4
+        # 関連商品の取得（ただし、現在の商品は除く）
+        context['related_items'] = Item.objects.exclude(pk=item_pk).order_by('-created_at')[:get_related_item_count]
+
+        # # カート内の商品数の取得
+        # context['quantities_in_cart']= Cart.get_quantities_in_cart(self.request.session, CART_SESSION_KEY)
+        # context['form'] = AddToCartForm()
         
-    #     context['form'] = AddToCartForm()
-        # return context
+        return context
     
     # def post(self, request, *args, **kwargs):
     #     self.object = self.get_object()
