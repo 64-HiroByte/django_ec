@@ -14,33 +14,30 @@
                 <h4 class="d-flex justify-content-between align-items-center mb-3">
                     <span class="text-primary">ショッピングカート</span>
                     <!-- items in cart -->
-                    {% comment %}  修正前コード
                     <span class="badge bg-primary rounded-pill">{{ quantities_in_cart }}</span>
-                    {% endcomment %}
-                    <span class="badge bg-primary rounded-pill">*</span>
                 </h4>
 
                 <!-- item list -->
                 <ul class="list-group mb-3">
                     
-                    {% comment %}  修正前（カートの中身を表示させる）
-                    {% for item_in_cart in items_in_cart %}
+                    {% for cartitem in cartitems %}
                     <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div>
-                            <h6 class="my-0">{{ item_in_cart.name }}</h6>
-                            <small class="text-body-secondary">¥ {{ item_in_cart.price | intcomma }} x {{ item_in_cart.quantity }} 点</small>
+                            <h6 class="my-0">{{ cartitem.item.name }}</h6>
+                            <small class="text-body-secondary">¥ {{ cartitem.item.price | intcomma }} x {{ cartitem.quantity }} 点</small>
                         </div>
                         <div class="row g-2 align-items-center">
-                            <span class="col-auto text-body-secondary ">¥ {{ item_in_cart.sub_total | intcomma }}</span>
+                            <span class="col-auto text-body-secondary ">¥ {{ cartitem.sub_total | intcomma }}</span>
+                            {% comment %}  削除処理　未実装
                             <form  class="col-auto" method="post" action="{% url 'cart:checkout' %}">
                             {% csrf_token %}
                                 <input type="hidden" name="item_pk" value="{{ item_in_cart.pk }}">
                                 <button class="btn btn-danger" type="submit"><i class="bi bi-trash"></i></button>
                             </form>
+                            {% endcomment %}
                         </div>
                     </li>
                     {% endfor %}
-                    {% endcomment %}
                 
                     <!-- promo code -->
                     {% comment %}　　プロモコードは実装するまでコメントアウト
@@ -54,12 +51,10 @@
                     {% endcomment %}
 
                     <!-- total price -->
-                    {% comment %}  修正前のコード
                     <li class="list-group-item d-flex justify-content-between">
                         <span>合計</span>
                         <strong class="me-5">¥ {{ total_price | intcomma }}</strong>
                     </li>
-                    {% endcomment %}
                 </ul>
 
                 <!-- promo code form -->

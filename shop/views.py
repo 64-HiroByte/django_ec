@@ -5,11 +5,13 @@ from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import RedirectView
 
+from cart.models import Cart
+from cart.models import CartItem
 from shop.forms import AddToCartForm
 from shop.models import Item
 
 
-CART_SESSION_KEY = 'cart'
+# CART_SESSION_KEY = 'cart'
 
 class ItemListView(ListView):
     model = Item
@@ -17,10 +19,14 @@ class ItemListView(ListView):
     context_object_name = 'items'
     ordering = 'created_at'
     
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context['quantities_in_cart']= Cart.get_quantities_in_cart(self.request.session, CART_SESSION_KEY)
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        cart = Cart.load_from_session(self.request.session)
+        if cart is None:
+            context['quantities_in_cart'] = 0
+        else:
+            context['quantities_in_cart']= cart.quantities
+        return context
 
 
 class ItemDetailView(DetailView):
@@ -38,11 +44,16 @@ class ItemDetailView(DetailView):
         # 関連商品の取得（ただし、現在の商品は除く）
         context['related_items'] = Item.objects.exclude(pk=item_pk).order_by('-created_at')[:get_related_item_count]
 
-        # # カート内の商品数の取得
+        # カート内の商品数の取得
+        cart = Cart.load_from_session(self.request.session)
+        if cart is None:
+            context['quantities_in_cart'] = 0
+        else:
+            context['quantities_in_cart']= cart.quantities 
+        return context
         # context['quantities_in_cart']= Cart.get_quantities_in_cart(self.request.session, CART_SESSION_KEY)
         # context['form'] = AddToCartForm()
-        
-        return context
+    
     
     # def post(self, request, *args, **kwargs):
     #     self.object = self.get_object()

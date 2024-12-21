@@ -10,24 +10,20 @@ from cart.models import CartItem
 from shop.models import Item
 
 
-CART_SESSION_KEY = 'cart'
+# CART_SESSION_KEY = 'cart'
 
 
 class AddToCartView(View):
     def get_cart(self):
-        cart_pk = self.request.session.get(CART_SESSION_KEY)
-
-        if cart_pk is None:
-            cart = Cart.objects.create()
-            self.request.session[CART_SESSION_KEY] = cart.pk
-            return cart
-        else:
-            return Cart.objects.get(pk=cart_pk)
+        cart = Cart.load_from_session(self.request.session)
+        if cart is None:
+            cart = Cart.create_cart(self.request.session)
+        return cart
     
     def post(self, request, *args, **kwargs):
         cart = self.get_cart()
         # item_pk = request.POST.get('item_pk')  # 商品一覧ページの数量もフォームを使う
-        item_pk = kwargs.get('item_pk')  # 商品一覧ページの数量もフォームを使う
+        item_pk = kwargs.get('item_pk')
         item = get_object_or_404(Item, pk=item_pk)
         
         quantity = int(request.POST.get('quantity'))
@@ -42,21 +38,26 @@ class CheckoutListView(TemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
-        context['cartitems'] = CartItem.objects.select_related('item', 'cart').filter(cart_id=3)
-        for cart_item in context['cartitems']:
-            print(f'{cart_item.item.name}: {cart_item.item.price} (JPY) * {cart_item.quantity} = {cart_item.sub_total}')
-        cart = Cart.objects.get(pk=3)
-        print(f'cart {cart.pk}: total price = {cart.get_total_price()} quanatities = {cart.quantities}')
+        cart = Cart.load_from_session(self.request.session)
         
-        """ 修正前のコード
-        # カート内の商品点数の取得"
-        context['quantities_in_cart']= Cart.get_quantities_in_cart(self.request.session, CART_SESSION_KEY)
-        # セッションデータからカートを生成
-        cart = Cart.create_from_session(self.request.session, CART_SESSION_KEY)
-        # contextにカートに関する情報を追加
-        context['items_in_cart'] = cart.items_in_cart
-        context['total_price'] = cart.total_price
-        """
+        if cart is None:
+            context['quantities_in_cart'] = 0
+        else:
+            context['cartitems'] = CartItem.objects.select_related('item', 'cart').filter(cart_id=cart.pk)
+            context['total_price'] = cart.get_total_price()
+            context['quantities_in_cart'] = cart.quantities
+        
+        # cart_pk = self.request.session.get(CART_SESSION_KEY)
+
+        # if cart is None:
+        #     context['cartitems'] = None
+            
+        # else:
+        #     cart = Cart.objects.get(pk=cart_pk)
+        #     context['cartitems'] = CartItem.objects.select_related('item', 'cart').filter(cart_id=cart_pk)
+        #     context['total_price'] = cart.get_total_price()
+        #     context['quantities_in_cart'] = cart.quantities
+        # print(context)
         
         return context
     
