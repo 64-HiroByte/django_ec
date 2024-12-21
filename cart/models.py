@@ -9,13 +9,13 @@ class Cart(models.Model):
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
 
-    
     def get_total_price(self):
         cart_items = self.items.select_related('item')
-        total_price = sum(cart_item.get_sub_total() for cart_item in cart_items)
+        total_price = sum(cart_item.sub_total for cart_item in cart_items)
         return total_price
     
-    def get_quantities(self):
+    @property
+    def quantities(self):
         cart_items = self.items.select_related('item')
         quantities = sum(cart_item.quantity for cart_item in cart_items)
         return quantities
@@ -44,7 +44,8 @@ class CartItem(models.Model):
             cart_item.save()
         return cart_item
     
-    def get_sub_total(self):
+    @property
+    def sub_total(self):
         return self.item.price * self.quantity
     
     def __str__(self):

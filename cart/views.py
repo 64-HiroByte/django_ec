@@ -44,9 +44,9 @@ class CheckoutListView(TemplateView):
         
         context['cartitems'] = CartItem.objects.select_related('item', 'cart').filter(cart_id=3)
         for cart_item in context['cartitems']:
-            print(f'{cart_item.item.name}: {cart_item.item.price} (JPY) * {cart_item.quantity} = {cart_item.get_sub_total()}')
+            print(f'{cart_item.item.name}: {cart_item.item.price} (JPY) * {cart_item.quantity} = {cart_item.sub_total}')
         cart = Cart.objects.get(pk=3)
-        print(f'cart {cart.pk}: total price = {cart.get_total_price()} quanatities = {cart.get_quantities()}')
+        print(f'cart {cart.pk}: total price = {cart.get_total_price()} quanatities = {cart.quantities}')
         
         """ 修正前のコード
         # カート内の商品点数の取得"
