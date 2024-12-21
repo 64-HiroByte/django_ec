@@ -28,13 +28,14 @@
                         </div>
                         <div class="row g-2 align-items-center">
                             <span class="col-auto text-body-secondary ">¥ {{ cartitem.sub_total | intcomma }}</span>
-                            {% comment %}  削除処理　未実装
-                            <form  class="col-auto" method="post" action="{% url 'cart:checkout' %}">
+
+                            <!-- 削除機能-->
+                            <form  class="col-auto" method="post" action="{% url 'cart:delete-item' cartitem.item.pk %}">
                             {% csrf_token %}
-                                <input type="hidden" name="item_pk" value="{{ item_in_cart.pk }}">
+                                <input type="hidden" name="item_pk" value="{{ cartitem.item.pk }}">
                                 <button class="btn btn-danger" type="submit"><i class="bi bi-trash"></i></button>
                             </form>
-                            {% endcomment %}
+
                         </div>
                     </li>
                     {% endfor %}

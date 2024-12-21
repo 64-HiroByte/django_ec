@@ -1,4 +1,5 @@
 from django.db import models
+from django.shortcuts import get_object_or_404
 
 from shop.models import Item
 # Create your models here.
@@ -63,6 +64,11 @@ class CartItem(models.Model):
             cart_item.quantity += quantity
             cart_item.save()
         return cart_item
+    
+    @classmethod
+    def delete_item(cls, cart_pk, item_pk):
+        cart_item = get_object_or_404(cls, cart_id=cart_pk, item_id=item_pk)
+        cart_item.delete()
     
     @property
     def sub_total(self):
