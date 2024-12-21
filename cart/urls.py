@@ -1,7 +1,6 @@
 from django.urls import path
 
 from cart.views import AddToCartView
-# from cart.views import CartCreateview
 from cart.views import CheckoutListView
 from cart.views import DeleteFromCartView
 

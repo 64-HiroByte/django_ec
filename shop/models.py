@@ -2,9 +2,9 @@ from django.db import models
 
 # Create your models here.
 class Item(models.Model):
-    class Meta:
-        db_table = 'items'
-    
+    """
+    商品を管理するモデル
+    """
     name = models.CharField(verbose_name='商品名', max_length=100)
     price = models.IntegerField(verbose_name='価格')
     image = models.ImageField(verbose_name='商品画像', upload_to='images/', blank=True, null=True)
@@ -13,5 +13,8 @@ class Item(models.Model):
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
     # rating は現状で設定しない
 
+    class Meta:
+        db_table = 'items'
+    
     def __str__(self):
         return self.name

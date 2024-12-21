@@ -9,6 +9,9 @@ from shop.models import Item
 
 
 class AddToCartView(View):
+    """
+    カートに商品を追加するためのビュー
+    """
     def get_cart(self):
         cart = Cart.load_from_session(self.request.session)
         if cart is None:
@@ -35,6 +38,9 @@ class DeleteFromCartView(View):
         return redirect('cart:checkout')
 
 class CheckoutListView(TemplateView):
+    """
+    カートの中身を表示させるためのビュー
+    """
     template_name = "cart/checkout.html"
     
     def get_context_data(self, **kwargs):
