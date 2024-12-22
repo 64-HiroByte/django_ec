@@ -13,6 +13,9 @@ from shop.models import Item
 
 @method_decorator(basic_auth_required, name='dispatch')
 class ManagementListView(ListView):
+    """
+    商品管理をするためのビュー
+    """
     model = Item
     template_name = "item_management/management_list.html"
     context_object_name = 'items'
@@ -21,22 +24,31 @@ class ManagementListView(ListView):
 
 @method_decorator(basic_auth_required, name='dispatch')
 class ItemCreateView(CreateView):
+    """
+    商品を新規登録するためのビュー
+    """
     model = Item
     template_name = "item_management/item_form.html"
     fields = '__all__'
-    success_url = reverse_lazy('management-item-list')
+    success_url = reverse_lazy('item_management:management-item-list')
 
 
 @method_decorator(basic_auth_required, name='dispatch')
 class ItemDeleteView(DeleteView):
+    """
+    商品を削除するためのビュー
+    """
     model = Item
     template_name = "item_management/item_delete.html"
-    success_url = reverse_lazy('management-item-list')
+    success_url = reverse_lazy('item_management:management-item-list')
 
 
 @method_decorator(basic_auth_required, name='dispatch')
 class ItemUpdateView(UpdateView):
+    """
+    商品の情報を更新するためのビュー
+    """
     model = Item
     template_name = "item_management/item_form.html"
     fields = '__all__'
-    success_url = reverse_lazy('management-item-list')
+    success_url = reverse_lazy('item_management:management-item-list')
