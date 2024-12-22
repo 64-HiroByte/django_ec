@@ -29,6 +29,9 @@ class AddToCartView(View):
         return redirect('shop:item-list')
 
 class DeleteFromCartView(View):
+    """
+    カートから指定した商品を削除するビュー
+    """
     def post(self, request, *args, **kwargs):
         cart = Cart.load_from_session(request.session)
         item_pk = kwargs.get('item_pk')

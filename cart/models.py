@@ -118,8 +118,8 @@ class CartItem(models.Model):
         カートに商品を追加する。既に同じ商品が存在する場合は、数量を加算する。
 
         Args:
-            cart (_type_): 関連するカート
-            item (_type_): 追加する商品
+            cart (Cart): 関連するカート
+            item (Item): 追加する商品
             quantity (int, optional): カートに追加する商品の数量（初期値: 1）
 
         Returns:
@@ -139,8 +139,8 @@ class CartItem(models.Model):
         カートから指定の商品を削除する。
 
         Args:
-            cart (_type_): 関連するカート
-            item (_type_): 追加する商品
+            cart (Cart): 関連するカート
+            item (Item): 追加する商品
         Raises:
             Http404: 指定のカートアイテムが存在しない場合
         """
