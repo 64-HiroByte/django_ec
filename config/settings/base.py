@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'item_management.apps.ItemManagementConfig',
     'accounts.apps.AccountsConfig',
     'cart.apps.CartConfig',
+    'purchase.apps.PurchaseConfig',
 ]
 
 MIDDLEWARE = [
