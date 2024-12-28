@@ -48,17 +48,16 @@ class Address(models.Model):
     
     Attributes:
         user(str): 関連するユーザーネーム（１対１リレーション）
-        country(str): 国名（入力可能な選択肢は'日本'のみ）
-        prefecture(ForeignKey): 都道府県名
         zip_code(str): 郵便番号（７桁の数字、ハイフンを含まない）
+        prefecture(ForeignKey): 都道府県名
         address(str): 住所（都道府県名を含まない）
         building(str, optional): 住所に続く建物の名称等
     """
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='address')
     # 住所
-    country = models.CharField(verbose_name='国', max_length=255)
-    prefecture = models.ForeignKey(Prefecture, on_delete=models.PROTECT)
+    # country = models.CharField(verbose_name='国', max_length=255)  # 日本国内に限定するためコメントアウト
     zip_code = models.CharField(verbose_name='郵便番号', max_length=7)  # ハイフン除く
+    prefecture = models.ForeignKey(Prefecture, on_delete=models.PROTECT)
     address = models.CharField(verbose_name='住所', max_length=255)
     building = models.CharField(verbose_name='住所（建物名など）', max_length=255, blank=True)
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
