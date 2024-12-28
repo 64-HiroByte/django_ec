@@ -8,6 +8,8 @@ class Prefecture(models.Model):
         neme(str): 都道府県名
     """
     name = models.CharField(verbose_name='都道府県名', max_length=10)
+    created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
     
     class Meta:
         db_table = 'prefectures'
