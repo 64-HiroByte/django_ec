@@ -13,6 +13,7 @@ class Prefecture(models.Model):
     
     class Meta:
         db_table = 'prefectures'
+        ordering = ['id']
     
     def __str__(self):
         return self.name
