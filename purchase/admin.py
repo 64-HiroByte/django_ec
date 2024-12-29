@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from purchase.models import Address
 from purchase.models import CreditCard
 from purchase.models import Prefecture
-from purchase.models import User
+from purchase.models import Purchaser
+from purchase.models import ShippingAddress
 
 # Register your models here.
-admin.site.register(Address)
 admin.site.register(CreditCard)
 admin.site.register(Prefecture)
-admin.site.register(User)
+admin.site.register(Purchaser)
+admin.site.register(ShippingAddress)
