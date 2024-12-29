@@ -25,5 +25,6 @@ class Command(BaseCommand):
         ]
         
         for prefecture_name in prefectures:
-            Prefecture.objects.get_or_create(name=prefecture_name)
+            Prefecture.objects.get_or_create(pref_name=prefecture_name)
         
+        self.stdout.write(self.style.SUCCESS('都道府県を登録しました！'))
