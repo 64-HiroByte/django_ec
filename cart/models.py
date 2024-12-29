@@ -7,7 +7,7 @@ class Cart(models.Model):
     """
     カートを管理するモデル
     
-    Fields:
+    Attributes:
         quantities(int): カート内の商品点数
     
     Methods:
@@ -96,6 +96,8 @@ class CartItem(models.Model):
         cart(ForeignKey): 関連するカート
         item(ForeignKey): カートに入っている商品
         quantity(int): 商品の数量
+    
+    Attributes:
         sub_total(int): 商品の小計
 
     Methods:
