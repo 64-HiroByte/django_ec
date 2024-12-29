@@ -1,11 +1,12 @@
 from django import forms
 
 from .models import CreditCard
+from .models import Prefecture
 from .models import Purchaser
 from .models import ShippingAddress
 
 
-class UserFrom(forms.ModelForm):
+class PurchaserForm(forms.ModelForm):
     """
     ユーザー情報登録フォーム
     """
@@ -14,13 +15,15 @@ class UserFrom(forms.ModelForm):
         fields = ['user_name', 'family_name', 'given_name', 'email']
 
 
-class AddressForm(forms.ModelForm):
+class ShippingAddressForm(forms.ModelForm):
     """
     住所入力フォーム
     """
     class Meta:
         model = ShippingAddress
         fields = ['zip_code', 'prefecture', 'address', 'building']
+    
+    prefecture = forms.ModelChoiceField(queryset=Prefecture.objects.all())
 
 
 class CreditCardForm(forms.ModelForm):
