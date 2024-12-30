@@ -1,3 +1,6 @@
+import calendar
+import datetime
+
 from django import forms
 
 from .models import CreditCard
@@ -33,3 +36,16 @@ class CreditCardForm(forms.ModelForm):
     class Meta:
         model = CreditCard
         fields = ['cardholder', 'card_number', 'card_expiration', 'cvv']
+    
+    def clean_card_expiration(self):
+        expiration = self.cleand_data['card_expiration']
+        expiration_m, expiration_y = expiration.split('/')
+        
+        expiration_y = 2000 + int(expiration_y)
+        expiration_m = int(expiration_m)
+        expiration_d = calendar.monthrange(2000 + int(expiration_y), int(expiration_m))[1]
+        expiration_date = datetime.date(expiration_y, expiration_m, expiration_d)
+        if expiration_date < datetime.date.today():
+            raise forms.ValidationError('有効期限が切れています')
+        return expiration
+    
