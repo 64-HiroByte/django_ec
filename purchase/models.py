@@ -1,5 +1,8 @@
 from django.db import models
 
+from shop.models import Item
+
+
 class Prefecture(models.Model):
     """
     都道府県名のモデル、住所を入力する際の選択肢として使用する
@@ -95,4 +98,49 @@ class CreditCard(models.Model):
     
     def __str__(self):
         return f'{self.purchaser.family_name}{self.purchaser.given_name} - credit card(****{self.card_number[-4:]})'
+
+class Order(models.Model):
+    """
+    注文履歴を管理するモデル
+    
+    Fields:
+        purchaser(OneToOne): 関連する購入者（１対１リレーション）
+        total_price(int): 注文の合計金額
+    """
+    purchaser = models.OneToOneField(Purchaser, on_delete=models.PROTECT)
+    total_price = models.IntegerField(verbose_name='合計金額')
+    created_at = models.DateTimeField(verbose_name='購入日', auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
+    
+    class Meta:
+        db_table = 'Orders'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        return f'{self.created_at}: {self.purchaser.family_name}{self.purchaser.given_name}'
+
+
+class OrderDetail(models.Model):
+    """
+    注文明細を管理するモデル
+    
+    Fields:
+        order(ForeignKey): 関連する注文履歴
+        item(ForeignKey): 注文した商品
+        quantity(int): 商品の数量
+        sub_total(int): 商品の小計
+    """
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='items')
+    item  = models.ForeignKey(Item, on_delete=models.PROTECT)
+    quantity = models.IntegerField(verbose_name='数量')
+    sub_total = models.IntegerField(verbose_name='小計')
+    created_at = models.DateTimeField(verbose_name='購入日', auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
+
+    class Meta:
+        db_table = 'Order_details'
+        ordering = ['created_at']
+    
+    def __str__(self):
+        return f'{self.item.name}: {self.order.purchaser.family_name}{self.order.purchaser.given_name}'
 
