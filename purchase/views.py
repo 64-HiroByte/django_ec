@@ -12,6 +12,7 @@ from cart.models import CartItem
 
 # Create your views here.
 class PurchaseView(View):
+    
     def post(self, request, *args, **kwargs):
         cart = Cart.load_from_session(request.session)
         if cart is None or cart.quantities == 0:

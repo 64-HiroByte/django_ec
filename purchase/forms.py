@@ -16,6 +16,32 @@ class PurchaserForm(forms.ModelForm):
     class Meta:
         model = Purchaser
         fields = ['user_name', 'family_name', 'given_name', 'email']
+        widgets ={
+            'user_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'user-name',
+                'placeholder': 'username',
+                'required': True,
+            }),
+            'family_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'family-name',
+                'placeholder': '山田',
+                'required': True,
+            }),
+            'given_name': forms.TextInput(attrs={
+                'class': 'form-control',
+                'id': 'given-name',
+                'placeholder': '太郎',
+                'required': True,
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'id': 'email',
+                'placeholder': 'your-email-address@example.com',
+                'required': True,
+            }),
+        }
 
 
 class ShippingAddressForm(forms.ModelForm):

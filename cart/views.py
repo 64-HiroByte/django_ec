@@ -1,11 +1,15 @@
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
+from django.shortcuts import render
 from django.views.generic import TemplateView
 from django.views.generic import View
 
 from cart.models import Cart
 from cart.models import CartItem
 from shop.models import Item
+from purchase.forms import CreditCardForm
+from purchase.forms import PurchaserForm
+from purchase.forms import ShippingAddressForm
 
 
 class AddToCartView(View):
@@ -46,6 +50,7 @@ class CheckoutListView(TemplateView):
     """
     template_name = "cart/checkout.html"
     
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         
@@ -59,3 +64,10 @@ class CheckoutListView(TemplateView):
             context['quantities_in_cart'] = cart.quantities
         
         return context
+
+    def get(self, request, *args, **kwargs):
+        context = self.get_context_data(**kwargs)
+        context['purchaser_form'] = PurchaserForm()
+        context['shipping_address_form'] = ShippingAddressForm()
+        context['credit_card_form'] = CreditCardForm()
+        return render(request, self.template_name, context)
