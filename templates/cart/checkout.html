@@ -145,21 +145,23 @@
                         </div>
                     {% endcomment %}
 
-                        <h4 class="mb-3">請求先（お届け先）</h4>
+                        <h4 class="mb-3">お届け先（請求先）</h4>
                         <div class="col-md-3">  <!-- 都道府県と順番を入れ替えた -->
-                            <label for="zip" class="form-label">郵便番号</label>
-                            <input type="text" class="form-control" id="zip" placeholder="数字7桁" required>
+                            <label for="zip-code" class="form-label">郵便番号</label>
+                            {{ shipping_address_form.zip_code }}
+                            {% comment %} <input type="text" class="form-control" id="zip" placeholder="数字7桁" required> {% endcomment %}
                             <div class="invalid-feedback">
                                 Zip code required.
                             </div>
                         </div>
 
                         <div class="col-md-4">
-                            <label for="state" class="form-label">都道府県</label>
-                            <select class="form-select" id="state" required>
+                            <label for="prefecture" class="form-label">都道府県</label>
+                            {{ shipping_address_form.prefecture }}
+                            {% comment %} <select class="form-select" id="prefecture" required>
                                 <option value="">選択してください</option>
                                 <option>California</option>
-                            </select>
+                            </select> {% endcomment %}
                             <div class="invalid-feedback">
                                 Please provide a valid state.
                             </div>
@@ -167,15 +169,17 @@
                         
                         <div class="col-12">
                             <label for="address" class="form-label">住所（都道府県以降）</label>
-                            <input type="text" class="form-control" id="address" placeholder="千代田区千代田１−１" required>
+                            {{ shipping_address_form.address }}
+                            {% comment %} <input type="text" class="form-control" id="address" placeholder="千代田区千代田１−１" required> {% endcomment %}
                             <div class="invalid-feedback">
                                 Please enter your shipping address.
                             </div>
                         </div>
 
                         <div class="col-12">
-                            <label for="address2" class="form-label">建物名<span class="text-body-secondary">（任意）</span></label>
-                            <input type="text" class="form-control" id="address2" placeholder="ビル名、マンション名など">
+                            <label for="building" class="form-label">建物名<span class="text-body-secondary">（任意）</span></label>
+                            {{ shipping_address_form.building }}
+                            {% comment %} <input type="text" class="form-control" id="building" placeholder="ビル名、マンション名など"> {% endcomment %}
                         </div>
                     </div>
 
@@ -212,8 +216,9 @@
 
                     <div class="row gy-3">
                         <div class="col-md-6">
-                            <label for="cc-name" class="form-label">カード名義人</label>
-                            <input type="text" class="form-control" id="cc-name" placeholder="TARO YAMADA" required>
+                            <label for="cardholder" class="form-label">カード名義人</label>
+                            {{ credit_card_form.cardholder }}
+                            {% comment %} <input type="text" class="form-control" id="cardholder" placeholder="TARO YAMADA" required> {% endcomment %}
                             <small class="text-body-secondary">カードに表示されている名前</small>
                             <div class="invalid-feedback">
                                 Name on card is required
@@ -221,24 +226,27 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label for="cc-number" class="form-label">カード番号</label>
-                            <input type="text" class="form-control" id="cc-number" placeholder="数字16桁" required>
+                            <label for="card-number" class="form-label">カード番号</label>
+                            {{ credit_card_form.card_number }}
+                            {% comment %} <input type="text" class="form-control" id="card-number" placeholder="数字16桁" required> {% endcomment %}
                             <div class="invalid-feedback">
                                 Credit card number is required
                             </div>
                         </div>
 
                         <div class="col-md-3">
-                            <label for="cc-expiration" class="form-label">有効期限（MM/YY）</label>
-                            <input type="text" class="form-control" id="cc-expiration" placeholder="月/年" required>
+                            <label for="card-expiration" class="form-label">有効期限（MM/YY）</label>
+                            {{ credit_card_form.card_expiration }}
+                            {% comment %} <input type="text" class="form-control" id="cc-expiration" placeholder="月/年" required> {% endcomment %}
                             <div class="invalid-feedback">
                                 Expiration date required
                             </div>
                         </div>
 
                         <div class="col-md-3">
-                            <label for="cc-cvv" class="form-label">セキュリティコード</label>
-                            <input type="text" class="form-control" id="cc-cvv" placeholder="数字3桁" required>
+                            <label for="cvv" class="form-label">セキュリティコード</label>
+                            {{ credit_card_form.cvv}}
+                            {% comment %} <input type="text" class="form-control" id="cvv" placeholder="数字3桁" required> {% endcomment %}
                             <div class="invalid-feedback">
                                 Security code required
                             </div>
