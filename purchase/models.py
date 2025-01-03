@@ -118,7 +118,7 @@ class CreditCard(models.Model):
                 message='MM/YYの形式で入力してください（例: 01/26）'
             ),
             RegexValidator(
-                regex=r'^(0[1-9]|1[0-2]/\d{2})$',
+                regex=r'^(0[1-9]|1[0-2])/\d{2}$',
                 message='"MM"の部分は01から12の範囲で入力してください'
             ),
         ]

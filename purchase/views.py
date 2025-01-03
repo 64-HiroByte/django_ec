@@ -61,6 +61,8 @@ class PurchaseView(View):
         
         else:
             print('this is error!')
+            address_errors = shipping_address_form.errors.items()
+            print(address_errors)
             cc_errors = credit_card_form.errors.items()
             print(cc_errors)
             return redirect('cart:checkout')
