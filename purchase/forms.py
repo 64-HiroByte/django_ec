@@ -118,7 +118,7 @@ class CreditCardForm(forms.ModelForm):
         }
     
     def clean_card_expiration(self):
-        expiration = self.cleand_data['card_expiration']
+        expiration = self.cleaned_data['card_expiration']
         expiration_m, expiration_y = expiration.split('/')
         
         expiration_y = 2000 + int(expiration_y)

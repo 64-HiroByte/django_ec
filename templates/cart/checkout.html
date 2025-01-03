@@ -115,9 +115,6 @@
                         <div class="col-12">
                             <label for="email" class="form-label">メールアドレス</label>
                             {{ purchaser_form.email }}
-                            {% comment %} 
-                            <input type="email" class="form-control" id="email" placeholder="your-email-address@example.com" required> 
-                            {% endcomment %}
                             <div class="invalid-feedback">
                                 Please enter a valid email address for shipping updates.
                             </div>
@@ -125,21 +122,7 @@
                         
                         <hr class="my-4">
 
-                    {% comment %}  
-                        <div class="col-md-5">
-                            <label for="country" class="form-label">国</label>
-                            <select class="form-select" id="country" required>
-                                <option value="">Choose...</option>
-                                <option>日本</option>
-                            </select>
-                            <div class="invalid-feedback">
-                                Please select a valid country.
-                            </div>
-                        </div>
-                    {% endcomment %}
-
-                    <h4 class="mb-3">お届け先（請求先）</h4>
-{% comment %}  
+                        <h4 class="mb-3">お届け先（請求先）</h4>
                         <div class="col-md-3">  <!-- 都道府県と順番を入れ替えた -->
                             <label for="zip-code" class="form-label">郵便番号</label>
                             {{ shipping_address_form.zip_code }}
@@ -147,7 +130,7 @@
                                 Zip code required.
                             </div>
                         </div>
-
+                        
                         <div class="col-md-4">
                             <label for="prefecture" class="form-label">都道府県</label>
                             {{ shipping_address_form.prefecture }}
@@ -168,38 +151,12 @@
                             <label for="building" class="form-label">建物名<span class="text-body-secondary">（任意）</span></label>
                             {{ shipping_address_form.building }}
                         </div>
-{% endcomment %}
-                {% comment %}  このチェックボックスは不要と思うので、コメントアウト
-                    
-                    
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="same-address">
-                        <label class="form-check-label" for="same-address">
-                            Shipping address is the same as my billing address
-                        </label>
                     </div>
 
-                    <div class="form-check">
-                        <input type="checkbox" class="form-check-input" id="save-info">
-                        <label class="form-check-label" for="save-info">
-                            Save this information for next time
-                        </label>
-                    </div>
-                {% endcomment %}
-
-                <hr class="my-4">
+                    <hr class="my-4">
 
                     <h4 class="mb-3">クレジットカード</h4>
 
-                {% comment %}  
-                    <div class="my-3">
-                        <div class="form-check">
-                            <input id="credit" name="paymentMethod" type="radio" class="form-check-input" checked required>
-                            <label class="form-check-label" for="credit">Credit card</label>
-                        </div>
-                    </div>
-                {% endcomment %}
-{% comment %}  
                     <div class="row gy-3">
                         <div class="col-md-6">
                             <label for="cardholder" class="form-label">カード名義人</label>
@@ -234,7 +191,7 @@
                             </div>
                         </div>
                     </div>
-{% endcomment %}
+
                     <hr class="my-4">
 
                     <button class="w-100 btn btn-primary btn-lg" type="submit">
