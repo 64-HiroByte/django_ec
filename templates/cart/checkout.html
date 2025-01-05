@@ -20,8 +20,9 @@
                 <ul class="list-group mb-3">
                     
                     {% if quantities_in_cart == 0 %}
+                
                     <li class="list-group-item d-flex justify-content-between lh-sm">
-                        <div>
+                        <div class="justify-content-center">
                             <p class="align-items-center">
                                 お客様のカートには商品が入っていません。
                             </p>
@@ -79,6 +80,8 @@
             </div>
 
             <!-- Billing -->
+            
+            {% if quantities_in_cart != 0 %}
             <div class="col-md-6 col-lg-7">
                 <form method="post" action="{% url 'cart:checkout' %}" novalidate>
                     {% csrf_token %}
@@ -220,6 +223,7 @@
                     </button>
                 </form>
             </div>
+            {% endif %}
         </div>
     </div>
 </main>
