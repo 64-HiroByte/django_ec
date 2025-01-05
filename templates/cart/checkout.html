@@ -80,8 +80,7 @@
 
             <!-- Billing -->
             <div class="col-md-6 col-lg-7">
-                {% comment %} <form class="needs-validation" method="post" action="{% url 'purchase:processing' %}" novalidate>  {% endcomment %}
-                <form method="post" action="{% url 'purchase:processing' %}">
+                <form method="post" action="{% url 'cart:checkout' %}" novalidate>
                     {% csrf_token %}
                     <h4 class="mb-3">購入者情報</h4>
                     <div class="row g-3">
@@ -89,7 +88,9 @@
                             <label for="family-name" class="form-label">姓</label>
                             {{ purchaser_form.family_name }}
                             <div class="invalid-feedback">
-                                Valid last name is required.
+                                {% for error in purchaser_form.family_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
                         
@@ -97,7 +98,9 @@
                             <label for="given-name" class="form-label">名</label>
                             {{ purchaser_form.given_name }}
                             <div class="invalid-feedback">
-                                Valid first name is required.
+                                {% for error in purchaser_form.given_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -107,7 +110,9 @@
                                 <span class="input-group-text">@</span>
                                 {{ purchaser_form.user_name }}
                                 <div class="invalid-feedback">
-                                    Your username is required.
+                                    {% for error in purchaser_form.user_name.errors %}
+                                    {{ error }}
+                                {% endfor %}
                                 </div>
                             </div>
                         </div>
@@ -116,7 +121,9 @@
                             <label for="email" class="form-label">メールアドレス</label>
                             {{ purchaser_form.email }}
                             <div class="invalid-feedback">
-                                Please enter a valid email address for shipping updates.
+                                {% for error in purchaser_form.email.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
                         
@@ -127,7 +134,9 @@
                             <label for="zip-code" class="form-label">郵便番号</label>
                             {{ shipping_address_form.zip_code }}
                             <div class="invalid-feedback">
-                                Zip code required.
+                                {% for error in shipping_address_form.zip_code.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
                         
@@ -135,7 +144,9 @@
                             <label for="prefecture" class="form-label">都道府県</label>
                             {{ shipping_address_form.prefecture }}
                             <div class="invalid-feedback">
-                                Please provide a valid state.
+                                {% for error in shipping_address_form.prefecture.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
                         
@@ -143,7 +154,9 @@
                             <label for="address" class="form-label">住所（都道府県以降）</label>
                             {{ shipping_address_form.address }}
                             <div class="invalid-feedback">
-                                Please enter your shipping address.
+                                {% for error in shipping_address_form.address.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -163,7 +176,9 @@
                             {{ credit_card_form.cardholder }}
                             <small class="text-body-secondary">カードに表示されている名前</small>
                             <div class="invalid-feedback">
-                                Name on card is required
+                                {% for error in credit_card_form.cardholder.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -171,7 +186,9 @@
                             <label for="card-number" class="form-label">カード番号</label>
                             {{ credit_card_form.card_number }}
                             <div class="invalid-feedback">
-                                Credit card number is required
+                                {% for error in credit_card_form.card_number.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -179,7 +196,9 @@
                             <label for="card-expiration" class="form-label">有効期限（MM/YY）</label>
                             {{ credit_card_form.card_expiration }}
                             <div class="invalid-feedback">
-                                Expiration date required
+                                {% for error in credit_card_form.card_expiration.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
 
@@ -187,7 +206,9 @@
                             <label for="cvv" class="form-label">セキュリティコード</label>
                             {{ credit_card_form.cvv}}
                             <div class="invalid-feedback">
-                                Security code required
+                                {% for error in credit_card_form.cvv.errors %}
+                                    {{ error }}
+                                {% endfor %}
                             </div>
                         </div>
                     </div>

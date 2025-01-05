@@ -30,14 +30,11 @@ class PurchaseView(View):
         purchaser_form = PurchaserForm(request.POST)
         shipping_address_form = ShippingAddressForm(request.POST)
         credit_card_form = CreditCardForm(request.POST)
-
         if (purchaser_form.is_valid() and 
             shipping_address_form.is_valid() and
             credit_card_form.is_valid()
             ):
             print('this is OK!')
-            # zip_error = shipping_address_form.errors.get('zip')
-            
             return redirect('cart:checkout')
         # try:
         #     with transaction.atomic():
