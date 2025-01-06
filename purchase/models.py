@@ -142,7 +142,7 @@ class Order(models.Model):
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
     
     class Meta:
-        db_table = 'Orders'
+        db_table = 'orders'
         ordering = ['-created_at']
     
     def __str__(self):
@@ -167,7 +167,7 @@ class OrderDetail(models.Model):
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
 
     class Meta:
-        db_table = 'Order_details'
+        db_table = 'order_details'
         ordering = ['created_at']
     
     def __str__(self):
