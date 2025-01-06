@@ -133,10 +133,10 @@ class Order(models.Model):
     注文履歴を管理するモデル
     
     Fields:
-        purchaser(OneToOne): 関連する購入者（１対１リレーション）
+        purchaser(OneToOne): 関連する購入者（多対１リレーション）
         total_price(int): 注文の合計金額
     """
-    purchaser = models.OneToOneField(Purchaser, on_delete=models.PROTECT)
+    purchaser = models.ForeignKey(Purchaser, on_delete=models.PROTECT)
     total_price = models.IntegerField(verbose_name='合計金額')
     created_at = models.DateTimeField(verbose_name='購入日', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
