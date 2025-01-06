@@ -1,6 +1,7 @@
-from django.core.validators import RegexValidator
 from django.db import models
 
+from purchase.varidators import ValidateDigitsNumber
+from purchase.varidators import validate_expiration_date
 from shop.models import Item
 
 
@@ -57,17 +58,15 @@ class ShippingAddress(models.Model):
         address(str): 都道府県名より後ろの住所
         building(str, optional): 住所に続く建物の名称等
     """
+    ZIP_CODE_LENGTH = 7
+    
     purchaser = models.OneToOneField(Purchaser, on_delete=models.CASCADE, related_name='shipping_address')
     # 住所
-    # country = models.CharField(verbose_name='国', max_length=255)  # 日本国内に限定するためコメントアウト
     zip_code = models.CharField(
         verbose_name='郵便番号',
-        max_length=7,
+        max_length=ZIP_CODE_LENGTH,
         validators=[
-            RegexValidator(
-                regex=r'^\d{7}$',
-                message='7桁の数字を入力してください'
-            ),
+            ValidateDigitsNumber(length=ZIP_CODE_LENGTH),
         ]
     )
     prefecture = models.ForeignKey(Prefecture, on_delete=models.PROTECT)
@@ -96,41 +95,31 @@ class CreditCard(models.Model):
         card_expiration(str): カードの有効期限（MM/YY、/を含む）
         cvv(str): セキュリティコード（3桁の数字）
     """
+    CARD_NUMBER_LENGTH = 16
+    CVV_LENGTH = 3
+    
     purchaser = models.OneToOneField(Purchaser, on_delete=models.CASCADE, related_name='credit_card')
     # クレジットカード
     cardholder = models.CharField(verbose_name='カード名義人', max_length=255)
     card_number = models.CharField(
         verbose_name='カード番号', 
-        max_length=16,
+        max_length=CARD_NUMBER_LENGTH,
         validators=[
-            RegexValidator(
-                regex=r'^\d{16}$', 
-                message='16桁の数字を入力してください'
-            ),
+            ValidateDigitsNumber(length=CARD_NUMBER_LENGTH),
         ]
     )
-    card_expiration = models.DateField(
+    card_expiration = models.CharField(
         verbose_name='有効期限',
         max_length=5,
         validators=[
-            RegexValidator(
-                regex=r'^\d{2}/\d{2}$',
-                message='MM/YYの形式で入力してください（例: 01/26）'
-            ),
-            RegexValidator(
-                regex=r'^(0[1-9]|1[0-2])/\d{2}$',
-                message='"MM"の部分は01から12の範囲で入力してください'
-            ),
+            validate_expiration_date,
         ]
     )
     cvv = models.CharField(
         verbose_name='セキュリティコード',
-        max_length=3,
+        max_length=CVV_LENGTH,
         validators=[
-            RegexValidator(
-                regex=r'^\d{3}$',
-                message='3桁の数字を入力してください'
-            ),
+            ValidateDigitsNumber(length=CVV_LENGTH),
         ]
     )
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
