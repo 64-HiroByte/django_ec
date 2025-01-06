@@ -18,7 +18,8 @@ class PurchaserForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            if self.errors.get(field_name):
+            # if self.errors.get(field_name):
+            if field_name in self.errors:
                 existing_classes = field.widget.attrs.get('class', '')
                 field.widget.attrs['class'] = f'{existing_classes} is-invalid'
 
@@ -74,7 +75,8 @@ class ShippingAddressForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            if self.errors.get(field_name):
+            # if self.errors.get(field_name):
+            if field_name in self.errors:
                 existing_classes = field.widget.attrs.get('class', '')
                 field.widget.attrs['class'] = f'{existing_classes} is-invalid'
     
@@ -138,7 +140,8 @@ class CreditCardForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for field_name, field in self.fields.items():
-            if self.errors.get(field_name):
+            # if self.errors.get(field_name):
+            if field_name in self.errors:
                 existing_classes = field.widget.attrs.get('class', '')
                 field.widget.attrs['class'] = f'{existing_classes} is-invalid'
     
@@ -220,7 +223,7 @@ class CreditCardForm(forms.ModelForm):
         expiration_date = self.convert_expiration_string_to_date(expiration)
         if expiration_date < datetime.date.today():
             raise forms.ValidationError('有効期限が切れています')
-        return expiration
+        return expiration_date
     
     def clean_card_number(self):
         card_number = self.cleaned_data['card_number']

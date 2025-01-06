@@ -109,7 +109,7 @@ class CreditCard(models.Model):
             ),
         ]
     )
-    card_expiration = models.CharField(
+    card_expiration = models.DateField(
         verbose_name='有効期限',
         max_length=5,
         validators=[

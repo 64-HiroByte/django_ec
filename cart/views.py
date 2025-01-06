@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -89,8 +90,24 @@ class CheckoutView(FormView):
         """
         print('this is OK!')
         # DB保存処理を記述する
-        
-        return redirect('shop:item-list')
+        try:
+            with transaction.atomic():
+                # Puchaserの保存
+                purchaser = purchaser_form.save()
+                
+                # ShippingAdressの保存
+                shipping_address = shipping_address_form.save(commit=False)
+                shipping_address.purchaser = purchaser
+                shipping_address.save()
+                
+                # CreditCardの保存
+                credit_card = credit_card_form.save(commit=False)
+                credit_card.purchaser = purchaser
+                credit_card =credit_card_form.save()
+            return redirect('shop:item-list')
+        except Exception as err:
+        #     # Print文の内容をFlashメッセージで表示させる
+            print(f'予期せぬエラーが発生しました: {err}')
     
     def forms_invalid(self, purchaser_form, shipping_address_form, credit_card_form):
         """
@@ -101,13 +118,13 @@ class CheckoutView(FormView):
             shipping_address_form=shipping_address_form,
             credit_card_form=credit_card_form
         )
-        print('#'*20 + ' validate error! ' + '#'*20)
-        purchaser_errors = purchaser_form.errors.items()
-        print(purchaser_errors)
-        address_errors = shipping_address_form.errors.items()
-        print(address_errors)
-        cc_errors = credit_card_form.errors.items()
-        print(cc_errors)
+        # print('#'*20 + ' validate error! ' + '#'*20)
+        # purchaser_errors = purchaser_form.errors.items()
+        # print(purchaser_errors)
+        # address_errors = shipping_address_form.errors.items()
+        # print(address_errors)
+        # cc_errors = credit_card_form.errors.items()
+        # print(cc_errors)
         return self.render_to_response(context=context)
 
     def post(self, request, *args, **kwargs):
