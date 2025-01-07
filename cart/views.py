@@ -57,16 +57,6 @@ class CheckoutView(FormView):
     credit_card_form_class = CreditCardForm
     
     
-    # def initialize_form(self, context, form_key, form_class, form_instance=None):
-    #     if form_key not in context:
-    #     #     context[form_key] = kwargs.get(form_key)
-    #     # if not context[form_key]:
-    #     #     context[form_key] = form_class()
-    #         if form_instance is not None:
-    #             context[form_key] = form_instance
-    #         else:
-    #             context[form_key] = form_class
-    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cart = Cart.load_from_session(self.request.session)
@@ -106,7 +96,7 @@ class CheckoutView(FormView):
                 credit_card =credit_card_form.save()
             return redirect('shop:item-list')
         except Exception as err:
-        #     # Print文の内容をFlashメッセージで表示させる
+            # Print文の内容をFlashメッセージで表示させる
             print(f'予期せぬエラーが発生しました: {err}')
     
     def forms_invalid(self, purchaser_form, shipping_address_form, credit_card_form):
@@ -118,13 +108,8 @@ class CheckoutView(FormView):
             shipping_address_form=shipping_address_form,
             credit_card_form=credit_card_form
         )
-        # print('#'*20 + ' validate error! ' + '#'*20)
-        # purchaser_errors = purchaser_form.errors.items()
-        # print(purchaser_errors)
-        # address_errors = shipping_address_form.errors.items()
-        # print(address_errors)
-        # cc_errors = credit_card_form.errors.items()
-        # print(cc_errors)
+        print(context)
+        print(purchaser_form)
         return self.render_to_response(context=context)
 
     def post(self, request, *args, **kwargs):
@@ -144,11 +129,3 @@ class CheckoutView(FormView):
         else:
             return self.forms_invalid(purchaser_form, shipping_address_form, credit_card_form)
             
-
-    # def get(self, request, *args, **kwargs):
-    #     context = self.get_context_data(**kwargs)
-    #     context['purchaser_form'] = PurchaserForm()
-    #     context['shipping_address_form'] = ShippingAddressForm()
-    #     context['credit_card_form'] = CreditCardForm()
-    #     # return render(request, self.template_name, context)
-    #     return self.render_to_response(context)
