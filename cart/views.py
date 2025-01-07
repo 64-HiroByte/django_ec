@@ -12,6 +12,7 @@ from shop.models import Item
 from purchase.forms import CreditCardForm
 from purchase.forms import PurchaserForm
 from purchase.forms import ShippingAddressForm
+from purchase.utils import save_purchase_related_data
 
 
 class AddToCartView(View):
@@ -74,7 +75,7 @@ class CheckoutView(FormView):
         
         return context
     
-    def forms_valid(self, purchaser_form, shipping_address_form, credit_card_form):
+    def forms_valid(self, request, purchaser_form, related_data_forms):
         """
         すべてのフォームのバリデーションが通った場合の処理
         """
@@ -84,16 +85,23 @@ class CheckoutView(FormView):
             with transaction.atomic():
                 # Puchaserの保存
                 purchaser = purchaser_form.save()
-                
+                # Purchase関連データの保存
+                save_purchase_related_data(
+                    purchaser=purchaser, 
+                    related_data_forms=related_data_forms
+                )
                 # ShippingAdressの保存
-                shipping_address = shipping_address_form.save(commit=False)
-                shipping_address.purchaser = purchaser
-                shipping_address.save()
+                # shipping_address = shipping_address_form.save(commit=False)
+                # shipping_address.purchaser = purchaser
+                # shipping_address.save()
                 
                 # CreditCardの保存
-                credit_card = credit_card_form.save(commit=False)
-                credit_card.purchaser = purchaser
-                credit_card =credit_card_form.save()
+                # credit_card = credit_card_form.save(commit=False)
+                # credit_card.purchaser = purchaser
+                # credit_card =credit_card_form.save()
+            request.session['purchaser'] = purchaser.pk
+
+            # リダイレクト先は、/purchase/に変更する予定
             return redirect('shop:item-list')
         except Exception as err:
             # Print文の内容をFlashメッセージで表示させる
@@ -108,8 +116,6 @@ class CheckoutView(FormView):
             shipping_address_form=shipping_address_form,
             credit_card_form=credit_card_form
         )
-        print(context)
-        print(purchaser_form)
         return self.render_to_response(context=context)
 
     def post(self, request, *args, **kwargs):
@@ -120,12 +126,14 @@ class CheckoutView(FormView):
         # shipping_address_form = self.shipping_address_form_class(request.POST)
         # credit_card_form = self.credit_card_form_class(request.POST)
         
+        related_data_forms = (shipping_address_form, credit_card_form)
         if (
             purchaser_form.is_valid() and
             shipping_address_form.is_valid() and
             credit_card_form.is_valid()
         ):
-            return self.forms_valid(purchaser_form, shipping_address_form, credit_card_form)
+            return self.forms_valid(request, purchaser_form, related_data_forms)
+            # return self.forms_valid(purchaser_form, shipping_address_form, credit_card_form)
         else:
             return self.forms_invalid(purchaser_form, shipping_address_form, credit_card_form)
             
