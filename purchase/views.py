@@ -20,7 +20,6 @@ class PurchaseView(View):
         if cart is None or cart.quantities == 0:
             print('カートが空です！')
             return redirect('shop:item-list')
-        # 以下のelse文の内容は注文履歴の処理を行う際に有効化する
-        # else:
-        #     cart_items = CartItem.objects.select_related('item', 'cart').filter(cart_id=cart.pk)
         
+        cart_items = CartItem.objects.select_related('item', 'cart').filter(cart_id=cart.pk)
+        print(cart_items)
