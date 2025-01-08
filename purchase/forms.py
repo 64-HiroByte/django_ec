@@ -51,7 +51,7 @@ class PurchaserForm(forms.ModelForm):
         error_messages = {
             'user_name': {
                 'required': 'ユーザーネームを入力してください',
-                'unique': 'このユーザーネームは既に使用されています',
+                # 'unique': 'このユーザーネームは既に使用されています',
             },
             'family_name': {
                 'required': '姓を入力してください',

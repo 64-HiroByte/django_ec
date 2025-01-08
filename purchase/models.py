@@ -29,12 +29,12 @@ class Purchaser(models.Model):
     購入者を管理するモデル
     
     Fields:
-        user_name(str): ユーザーネーム（ユニーク制約）
+        user_name(str): ユーザーネーム
         family_name(str): 氏名の姓の部分（first_nameと同じ）
         given_name(str): 氏名の名の部分（last_nameと同じ）
         email(str): メールアドレス
     """
-    user_name = models.CharField(verbose_name='ユーザーネーム', max_length=255, unique=True)
+    user_name = models.CharField(verbose_name='ユーザーネーム', max_length=255)
     family_name = models.CharField(verbose_name='姓', max_length=255)
     given_name = models.CharField(verbose_name='名', max_length=255)
     email = models.EmailField(verbose_name='メールアドレス')
