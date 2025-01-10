@@ -1,5 +1,5 @@
+from django.contrib import messages
 from django.db import transaction
-from django.template.response import TemplateResponse
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.views import View
@@ -11,28 +11,25 @@ from purchase.models import OrderDetail
 from purchase.models import Purchaser
 
 
-# Create your views here.
 class PurchaseView(View):
-    
+    """
+    購入処理（注文履歴・注文明細の登録）を行うビュー
+    """
     def get(self, request, *args, **kwargs):
-        print('-' * 30 + ' get ' + '-'* 30)
         cart = Cart.load_from_session(request.session)
         
         # カートがない、または、数量が０の場合、トップページへリダイレクト
         if cart is None or cart.quantities == 0:
-            print('カートが空です！')
             return redirect('shop:item-list')
         
         purchaser_pk = request.session.get('purchaser')
         # セッションに購入者情報がない場合、トップページへリダイレクト
         if purchaser_pk is None:
-            print('購入者情報がありません！')
             return redirect('shop:item-list')
         else:
             purchaser = Purchaser.objects.get(pk=purchaser_pk)
         
         try:
-            print('DB保存処理を開始します')
             with transaction.atomic():
                 # OrderテーブルにCartテーブルの情報を保存
                 order = Order.objects.create(
@@ -53,13 +50,14 @@ class PurchaseView(View):
                 # カートの中身を削除
                 cart.delete()
             
-            # セッションから購入者情報を削除
-            del request.session['cart']
-            del request.session['purchaser']
+                # セッションから購入者情報を削除
+                del request.session['cart']
+                del request.session['purchaser']
+                
+                messages.success(request, '購入ありがとうございます')
+                return redirect('shop:item-list')
             
-            print('購入が完了しました！')
-            return redirect('shop:item-list')
-        except Exception as e:
-            print(f'エラーが発生しました: {e}')
+        except Exception as err:
+            messages.error(request, f'エラーが発生しました（{err}）')
             return redirect('shop:item-list')
         

@@ -20,6 +20,14 @@
     </head>
 
     <body>
+        <!-- Flash Messages -->
+        {% for message in messages %}
+        <div  class="{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show ps-5" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-light bg-light">
             <div class="container px-4 px-lg-5">
@@ -63,7 +71,7 @@
                 </div>
             </div>
         </nav>
-        
+
         {% block content %}
         {% endblock %}
 

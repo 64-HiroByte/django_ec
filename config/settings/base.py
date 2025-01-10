@@ -1,9 +1,11 @@
 """
 本番環境とローカル環境共通で適用される設定内容
 """
+from pathlib import Path
+
 import environ
 
-from pathlib import Path
+from django.contrib import messages
 
 
 env = environ.Env()
@@ -124,3 +126,11 @@ LOGIN_REDIRECT_URL = 'shop:item-list'
 
 # 金額表示: 3桁区切り
 NUMBER_GROUPING = 3
+
+# message.tagsの設定
+MESSAGE_TAGS = {
+    messages.INFO: 'alert alert-info',
+    messages.SUCCESS: 'alert alert-success',
+    messages.WARNING: 'alert alert-warning',
+    messages.ERROR: 'alert alert-danger',
+}
