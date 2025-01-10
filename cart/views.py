@@ -102,7 +102,7 @@ class CheckoutView(FormView):
             request.session['purchaser'] = purchaser.pk
 
             # リダイレクト先は、/purchase/に変更する予定
-            return redirect('shop:item-list')
+            return redirect('purchase:processing')
         except Exception as err:
             # Print文の内容をFlashメッセージで表示させる
             print(f'予期せぬエラーが発生しました: {err}')
