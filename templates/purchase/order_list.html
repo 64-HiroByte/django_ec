@@ -1,0 +1,33 @@
+{% extends "purchase/base.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block pagetitle %}注文履歴{% endblock pagetitle %}
+
+{% block content %}
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th class="text-center" scope="col">注文番号</th>
+            <th scope="col">注文日時</th>
+            <th scope="col">購入者</th>
+            <th class="text-center" scope="col">合計金額</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for order in orders %}
+        <tr>
+            <td class="pe-4 text-end">{{ order.pk}}</td>
+            <td class="ps-4">{{ order.created_at | date:"Y-m-d H:i" }}</td>
+            <td class="ps-4">{{ order.purchaser }}</td>
+            <td class="pe-4 text-end">{{ order.total_price | intcomma }} 円</td>
+            <td>
+                <a href="#" class="btn btn-dark"><i class="bi bi-file-earmark-text-fill"></i>注文明細</a>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock content %}

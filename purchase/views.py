@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import redirect
 from django.shortcuts import render
-from django.views import View
+from django.views.generic import ListView
+from django.views.generic import View
 
 from cart.models import Cart
 from cart.models import CartItem
@@ -61,3 +62,19 @@ class PurchaseView(View):
             messages.error(request, f'エラーが発生しました（{err}）')
             return redirect('shop:item-list')
         
+
+class OrderListView(ListView):
+    """
+    注文履歴を表示するビュー
+    """
+    model = Order
+    template_name = 'purchase/order_list.html'
+    context_object_name = 'orders'
+    ordering = '-created_at'
+    
+    # 現状でcontext_dataをオーバーライドする必要はないが、今後の拡張を見据えて記述しておく
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 今後contextに追加するデータがあれば、ここに記述する
+        
+        return context
