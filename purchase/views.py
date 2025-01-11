@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import View
 
@@ -72,9 +73,26 @@ class OrderListView(ListView):
     context_object_name = 'orders'
     ordering = '-created_at'
     
+    def get_queryset(self):
+        return Order.objects.select_related('purchaser')
+    
     # 現状でcontext_dataをオーバーライドする必要はないが、今後の拡張を見据えて記述しておく
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         # 今後contextに追加するデータがあれば、ここに記述する
         
+        return context
+
+
+class OrderDetailView(DetailView):
+    ""
+    model = Order
+    template_name = 'purchase/order_detail.html'
+    context_object_name = 'orders'
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # 今後contextに追加するデータがあれば、ここに記述する
+        # print(context['orders'])
+        print(context)
         return context
