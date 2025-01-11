@@ -159,7 +159,7 @@ class OrderDetail(models.Model):
         quantity(int): 商品の数量
         sub_total(int): 商品の小計
     """
-    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='items')
+    order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='order_detail')
     item  = models.ForeignKey(Item, on_delete=models.PROTECT)
     quantity = models.IntegerField(verbose_name='数量')
     sub_total = models.IntegerField(verbose_name='小計')

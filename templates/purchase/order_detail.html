@@ -2,8 +2,69 @@
 {% load static %}
 {% load humanize %}
 
-{% block pagetitle %}注文明細{% endblock pagetitle %}
+{% block pagetitle %}購入明細（注文番号： {{ orders.pk }}）{% endblock pagetitle %}
 
 {% block content %}
+<hr>
+<div class="row mt-5 gx-5">
+    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+        <a href="{% url 'purchase:order-list' %}" class="btn btn-secondary me-3">
+            購入履歴へ
+        </a>
+    </div>
+    <!-- 購入者情報 -->
+    <div class="col-6 ">
+        <div class="card shadow">
+        <h2 class="ps-4 mt-4">購入者情報</h2>
+        <table class="table">
+            <tr>
+                <th class="col-4"></th>
+                <th class="col-8"></th>
+            </tr>
+            <tr>
+                <td class="text-end pe-3">購入日時:</td>
+                <td>{{ orders.created_at | date:"Y年m月d日 H:i" }}</td>
+            </tr>
+            
+            {% for purchaser_info in purchaser_infos %}
+            <tr>
+                <td class="text-end pe-3">{{ purchaser_info.label }}</td>
+                <td>{{ purchaser_info.value | safe }}</td>
+            </tr>
+            {% endfor %}
+            <tr>
+                <td class="text-end pe-3">有効期限:</td>
+                <td>{{ card_expiration_date }}</td>
+            </tr>
+        </table>
+        </div>
+    </div>
 
+    <!-- 購入商品 -->
+    <div class="col-6">
+        <table class="table table-striped">
+            <h2 class="mt-4">購入商品</h2>
+            <thead>
+                <tr>
+                    <th class="col-6 ps-3" scope="col">商品名</th>
+                    <th class="col-2 pe-4 text-end" scope="col">単価（円）</th>
+                    <th class="col-2 pe-4 text-end" scope="col">数量</th>
+                    <th class="col-2 pe-3 text-end" scope="col">小計（円）</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                {% for ordered_item in order_details %}
+                <tr>
+                    <td class="ps-3">{{ ordered_item.item.name}}</td>
+                    <td class="pe-4 text-end">{{ ordered_item.item.price }}</td>
+                    <td class="pe-4 text-end">{{ ordered_item.quantity }}</td>
+                    <td class="pe-3 text-end">{{ ordered_item.sub_total | intcomma }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <h3 class="text-end mt-4 pe-3">合計金額: {{ orders.total_price | intcomma }} 円</h3>
+    </div>
+</div>
 {% endblock content %}
