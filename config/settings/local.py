@@ -43,3 +43,6 @@ MIDDLEWARE += [
 DEBUG_TOOLBAR_CONFIG = {
     'SHOW_TOOLBAR_CALLBACK': show_toolbar,
 }
+
+# 開発環境において、メール送信はコンソールに出力
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
