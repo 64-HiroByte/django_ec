@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.core.mail import send_mail
 from django.db import transaction
 from django.shortcuts import redirect
 from django.shortcuts import render
@@ -120,3 +121,18 @@ class OrderDetailView(DetailView):
         context['card_expiration_date'] = convert_expiration_string_to_date(orders.purchaser.credit_card.card_expiration)
         context['order_details'] = orders.order_detail.all()
         return context
+
+
+class SendOrderMailView(View):
+    """
+    注文情報をメールで送信するビュー
+    """
+    def get(self, request, *args, **kwargs):
+        subject = "題名"
+        message = "本文"
+        from_email = "hiorbyte@gmail.com"
+        recipient_list = [
+            "hiorbyte@gmail.com"
+        ]
+        send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+        return redirect('cart:checkout')
