@@ -26,7 +26,7 @@ def save_purchase_related_data(purchaser, related_data_forms):
     購入者に関連する情報を保存する
     args:
         purchaser (Purchaser): 購入者のインスタンス
-        related_data_forms (list or tuple): 購入者に関連する情報のフォームのリストまたはタプル
+        related_data_forms (list): 購入者に関連する情報のフォームのリスト
     """
     for related_data_form in related_data_forms:
         related_data = related_data_form.save(commit=False)

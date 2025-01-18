@@ -13,6 +13,7 @@ from shop.models import Item
 from purchase.forms import CreditCardForm
 from purchase.forms import PurchaserForm
 from purchase.forms import ShippingAddressForm
+from purchase.models import Purchaser
 from purchase.utils import save_purchase_related_data
 
 
@@ -51,6 +52,18 @@ class DeleteFromCartView(View):
 class CheckoutView(FormView):
     """
     カートの中身を表示させるためのビュー
+    
+    Attributes:
+        form_class(Form): メインのフォームクラス
+        shipping_address_form_class(Form): 配送先住所のフォームクラス
+        credit_card_form_class(Form): クレジットカードのフォーム
+        primary_form_key(str): メインのフォームのキー
+        form_classes(dict): フォームの辞書
+
+    Helper Methods:
+        get_related_data_forms: 関連データのフォームを取得する
+        forms_valid_failure: バリデーションエラーまたはトランザクションエラー時の処理
+        forms_valid_successful: すべてのフォームのバリデーションが通った場合の処理
     """
     template_name = "cart/checkout.html"
 
@@ -58,6 +71,30 @@ class CheckoutView(FormView):
     shipping_address_form_class = ShippingAddressForm
     credit_card_form_class = CreditCardForm
     
+    primary_form_key = 'purchaser_form'
+    
+    form_classes = {
+        primary_form_key: form_class,
+        'shipping_address_form': shipping_address_form_class,
+        'credit_card_form': credit_card_form_class,
+    }
+    
+    def get_related_data_forms(self, forms):
+        """
+        関連データのフォームを取得する
+        
+        Args:
+            forms(dict): フォームの辞書
+        
+        Returns:
+            list: 関連データのフォームのリスト
+        """
+        related_data_forms = []
+        for form_name, form_class in forms.items():
+            if form_name != self.primary_form_key:
+                related_data_forms.append(form_class)
+            
+        return related_data_forms
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -70,13 +107,21 @@ class CheckoutView(FormView):
             context['total_price'] = cart.get_total_price()
             context['quantities_in_cart'] = cart.quantities
         
-        context['purchaser_form'] = kwargs.get('purchaser_form' , self.form_class())
-        context['shipping_address_form'] = kwargs.get('shipping_address_form', self.shipping_address_form_class())
-        context['credit_card_form'] = kwargs.get('credit_card_form', self.credit_card_form_class())
+        for form_name, form_class in self.form_classes.items():
+            context[form_name] = kwargs.get(form_name, form_class())
         
         return context
     
-    def forms_valid(self, request, purchaser_form, related_data_forms):
+    def forms_valid_failure(self, forms, messages_level=messages.info, message=''):
+        """
+        バリデーションエラーまたはトランザクションエラー時の処理
+        """
+        context = self.get_context_data(**forms)
+        messages_level(self.request, message)
+        
+        return self.render_to_response(context=context)
+    
+    def forms_valid_successful(self, request, forms):
         """
         すべてのフォームのバリデーションが通った場合の処理
         """
@@ -84,46 +129,33 @@ class CheckoutView(FormView):
         try:
             with transaction.atomic():
                 # Puchaserの保存
-                purchaser = purchaser_form.save()
+                purchaser = forms[self.primary_form_key].save()
+
                 # Purchase関連データの保存
+                related_data_forms = self.get_related_data_forms(forms)
                 save_purchase_related_data(
                     purchaser=purchaser, 
                     related_data_forms=related_data_forms
                 )
-                request.session['purchaser'] = purchaser.pk
+                # 購入者情報をセッションに保存
+                Purchaser.save_to_session(request.session, purchaser.pk)
 
-                return redirect('purchase:processing')
+            return redirect('purchase:processing')
         except Exception as err:
             # エラーが発生した場合、エラーメッセージを表示し、チェックアウトページにリダイレクト
-            messages.error(request, f'購入処理中にエラーが発生しました（{err}）')
-            return redirect('cart:checkout')
+            messages_level = messages.error
+            message = f'購入処理中にエラーが発生しました（{err}）'
+            return self.forms_valid_failure(forms, messages_level=messages_level, message=message)
     
-    def forms_invalid(self, purchaser_form, shipping_address_form, credit_card_form):
-        """
-        バリデーションにエラーがあった場合の処理
-        """
-        context = self.get_context_data(
-            purchaser_form=purchaser_form,
-            shipping_address_form=shipping_address_form,
-            credit_card_form=credit_card_form
-        )
-        messages.info(self.request, '入力内容に誤りがあります')
-        return self.render_to_response(context=context)
-
     def post(self, request, *args, **kwargs):
-        purchaser_form = PurchaserForm(request.POST)
-        shipping_address_form = ShippingAddressForm(request.POST)
-        credit_card_form = CreditCardForm(request.POST)
-        
-        related_data_forms = (shipping_address_form, credit_card_form)
-        
-        if (
-            purchaser_form.is_valid() and
-            shipping_address_form.is_valid() and
-            credit_card_form.is_valid()
-        ):
-            return self.forms_valid(request, purchaser_form, related_data_forms)
-        
+        # フォームのインスタンスを生成し、辞書に格納
+        forms = {}
+        for form_name, form_cls in self.form_classes.items():
+            forms[form_name] = form_cls(request.POST)
+
+        # バリデーションを実行
+        if all(form.is_valid() for form in forms.values()):
+            return self.forms_valid_successful(request, forms)
         else:
-            return self.forms_invalid(purchaser_form, shipping_address_form, credit_card_form)
-            
+            message = '入力内容に誤りがあります'
+            return self.forms_valid_failure(forms, message=message)

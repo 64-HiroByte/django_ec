@@ -22,7 +22,7 @@
     <body>
         <!-- Flash Messages -->
         {% for message in messages %}
-        <div  class="{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show ps-5" role="alert">
+        <div  class="{% if message.tags %}{{ message.tags }}{% endif %} alert-dismissible fade show ps-5 mb-0" role="alert">
             {{ message }}
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
