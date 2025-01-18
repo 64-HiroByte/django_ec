@@ -1,8 +1,10 @@
+from basicauauth.decorators import basic_auth_required
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.db import transaction
 from django.shortcuts import redirect
 from django.shortcuts import render
+from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
 from django.views.generic import ListView
 from django.views.generic import View
@@ -66,6 +68,7 @@ class PurchaseView(View):
             return redirect('shop:item-list')
         
 
+@method_decorator(basic_auth_required, name='dispatch')
 class OrderListView(ListView):
     """
     購入履歴を表示するビュー
@@ -79,6 +82,7 @@ class OrderListView(ListView):
         return Order.objects.select_related('purchaser')
 
 
+@method_decorator(basic_auth_required, name='dispatch')
 class OrderDetailView(DetailView):
     """
     購入明細を表示するビュー
