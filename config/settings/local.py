@@ -45,4 +45,4 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 
 # 開発環境において、メール送信はコンソールに出力
-# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
