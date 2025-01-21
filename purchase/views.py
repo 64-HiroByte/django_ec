@@ -1,4 +1,4 @@
-from basicauauth.decorators import basic_auth_required
+from basicauth.decorators import basic_auth_required
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.db import transaction
@@ -15,6 +15,7 @@ from purchase.models import Order
 from purchase.models import OrderDetail
 from purchase.models import Purchaser
 from purchase.utils import convert_expiration_string_to_date
+from purchase.utils import redirect_if_invalid
 
 
 class PurchaseView(View):
@@ -23,17 +24,22 @@ class PurchaseView(View):
     """
     def get(self, request, *args, **kwargs):
         cart = Cart.load_from_session(request.session)
+        purchaser_pk = Purchaser.load_from_session(request.session)
+        redirect_url = 'shop:item-list'
         
         # カートがない、または、数量が０の場合、トップページへリダイレクト
-        if cart is None or cart.quantities == 0:
-            return redirect('shop:item-list')
+        # if cart is None or cart.quantities == 0:
+        #     return redirect('shop:item-list')
         
-        purchaser_pk = request.session.get('purchaser')
+        # purchaser_pk = request.session.get('purchaser')
         # セッションに購入者情報がない場合、トップページへリダイレクト
-        if purchaser_pk is None:
-            return redirect('shop:item-list')
-        else:
-            purchaser = Purchaser.objects.get(pk=purchaser_pk)
+        # if purchaser_pk is None:
+        #     return redirect('shop:item-list')
+        # else:
+            # purchaser = Purchaser.objects.get(pk=purchaser_pk)
+        redirect_if_invalid(cart=cart, purchaser_pk=purchaser_pk, redirect_url=redirect_url)
+        
+        purchaser = Purchaser.objects.get(pk=purchaser_pk)
         
         try:
             with transaction.atomic():
@@ -61,7 +67,7 @@ class PurchaseView(View):
                 del request.session['purchaser']
                 
                 messages.success(request, '購入ありがとうございます')
-                return redirect('shop:item-list')
+                return redirect(redirect_url)
             
         except Exception as err:
             messages.error(request, f'エラーが発生しました（{err}）')

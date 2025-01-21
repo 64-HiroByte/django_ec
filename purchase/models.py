@@ -58,6 +58,23 @@ class Purchaser(models.Model):
         """
         session[session_key] = purchaser_id
     
+    @classmethod
+    def load_from_session(cls, session, session_key=PURCHASER_SESSION_KEY):
+        """
+        セッションから購入者情報を取得する
+        
+        Args:
+            session(SessionBase): リクエストのセッション情報
+            session_key(str, optional): セッション内で購入者IDを保持するキー（初期値: PURCHASER_SESSION_KEY）
+        
+        Returns:
+            Purchaser: セッション内に保存されている購入者情報
+        """
+        purchaser_id = session.get(session_key)
+        if purchaser_id is None:
+            return None
+        return cls.objects.get(pk=purchaser_id)
+    
     def __str__(self):
         return f'{self.family_name}{self.given_name}@{self.user_name}'
 

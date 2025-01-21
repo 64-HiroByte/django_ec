@@ -1,6 +1,8 @@
 import calendar
 import datetime
 
+from django.shortcuts import redirect
+
 
 def convert_expiration_string_to_date(expiration):
         """
@@ -32,3 +34,19 @@ def save_purchase_related_data(purchaser, related_data_forms):
         related_data = related_data_form.save(commit=False)
         related_data.purchaser = purchaser
         related_data.save()
+
+
+def redirect_if_invalid(cart=None, purchaser_pk=None, redirect_url=None):
+    """
+    カートがない、または、数量が０の場合、または、購入者情報がない場合、リダイレクトする
+    args:
+        cart (Cart): カートのインスタンス
+        purchaser_pk (int): 購入者のプライマリーキー
+        redirect_url (str): リダイレクト先のURL
+    
+    returns:
+        redirect: リダイレクト先のURL
+    """
+    if (cart is None or getattr(cart, 'quantities', 0) == 0) or purchaser_pk is None:
+        return redirect(redirect_url)
+    return None
