@@ -29,13 +29,15 @@
             {% for purchaser_info in purchaser_infos %}
             <tr>
                 <td class="text-end pe-3">{{ purchaser_info.label }}</td>
-                <td>{{ purchaser_info.value | safe }}</td>
+                <td>{{ purchaser_info.value | linebreaksbr }}</td>
             </tr>
             {% endfor %}
+            {% comment %}  
             <tr>
                 <td class="text-end pe-3">有効期限:</td>
                 <td>{{ card_expiration_date }}</td>
             </tr>
+            {% endcomment %}
         </table>
         </div>
     </div>

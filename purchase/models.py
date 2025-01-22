@@ -1,5 +1,6 @@
 from django.db import models
 
+from purchase.utils import convert_expiration_string_to_date
 from purchase.varidators import ValidateDigitsNumber
 from purchase.varidators import validate_expiration_date
 from shop.models import Item
@@ -74,9 +75,19 @@ class Purchaser(models.Model):
         if purchaser_id is None:
             return None
         return cls.objects.get(pk=purchaser_id)
+
+    @property
+    def full_name(self):
+        """
+        購入者の氏名を返す
+
+        Returns:
+            str: 購入者の氏名（姓と名の間に半角スペースあり）
+        """
+        return f'{self.family_name} {self.given_name}'
     
     def __str__(self):
-        return f'{self.family_name}{self.given_name}@{self.user_name}'
+        return f'{self.full_name}@{self.user_name}'
 
 class ShippingAddress(models.Model):
     """
@@ -109,8 +120,21 @@ class ShippingAddress(models.Model):
     class Meta:
         db_table = 'shipping_addresses'
     
+    @property
+    def full_address(self):
+        """
+        配送先の住所を返す
+
+        Returns:
+            str: 登録された配送先住所（建物名等の登録がある場合は、\n で改行して表示）
+        """
+        full_address = f'{self.prefecture}{self.address}'
+        if self.building:
+            full_address += f'\n{self.building}'
+        return full_address
+    
     def __str__(self):
-        return f'{self.purchaser.family_name}{self.purchaser.given_name} - shipping address'
+        return f'{self.purchaser.full_name} - {self.full_address}'
 
 
 class CreditCard(models.Model):
@@ -156,8 +180,29 @@ class CreditCard(models.Model):
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
     
+    @property
+    def last_four_digits(self):
+        """
+        クレジットカード番号の末尾4桁を返す
+
+        Returns:
+            str: 登録されたクレジットカードの末尾4桁
+        """
+        return f'**** **** **** {self.card_number[-4:]}'
+    
+    @property
+    def expiration_date(self):
+        """
+        登録されたクレジットカードの有効期限を年月日（date型）で返す
+
+        Returns:
+            date: YYYY-MM-DD に変換された日付（DDは末日）
+        """
+        return convert_expiration_string_to_date(self.card_expiration)
+    
     def __str__(self):
-        return f'{self.purchaser.family_name}{self.purchaser.given_name} - credit card(****{self.card_number[-4:]})'
+        return f'{self.purchaser.full_name} - {self.last_four_digits})'
+
 
 class Order(models.Model):
     """
@@ -177,7 +222,7 @@ class Order(models.Model):
         ordering = ['-created_at']
     
     def __str__(self):
-        return f'{self.created_at}: {self.purchaser.family_name}{self.purchaser.given_name}'
+        return f'{self.created_at}: {self.purchaser.full_name}'
 
 
 class OrderDetail(models.Model):
@@ -202,5 +247,5 @@ class OrderDetail(models.Model):
         ordering = ['created_at']
     
     def __str__(self):
-        return f'{self.item.name}: {self.order.purchaser.family_name}{self.order.purchaser.given_name}'
+        return f'{self.item.name}: {self.order.purchaser.full_name}'
 

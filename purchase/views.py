@@ -115,22 +115,25 @@ class OrderDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         orders = self.object
         
-        full_address = f'{orders.purchaser.shipping_address.prefecture}{orders.purchaser.shipping_address.address}'
+        # full_address = f'{orders.purchaser.shipping_address.prefecture}{orders.purchaser.shipping_address.address}'
         
-        if orders.purchaser.shipping_address.building:
-            full_address += f'<br>{orders.purchaser.shipping_address.building}'
+        # if orders.purchaser.shipping_address.building:
+        #     full_address += f'\n{orders.purchaser.shipping_address.building}'
             
         context['purchaser_infos'] = [
-            {'label': '氏名', 'value': f'{orders.purchaser.family_name} {orders.purchaser.given_name}'},
+            {'label': '氏名', 'value': f'{orders.purchaser.full_name}'},
             {'label': 'ユーザーネーム', 'value': orders.purchaser.user_name},
             {'label': 'メールアドレス', 'value': orders.purchaser.email},
+            
             {'label': '郵便番号', 'value': orders.purchaser.shipping_address.zip_code},
-            {'label': '配送先住所', 'value': full_address},
+            {'label': '配送先住所', 'value': orders.purchaser.shipping_address.full_address},
             {'label': 'カード名義人', 'value': orders.purchaser.credit_card.cardholder},
-            {'label': 'カード番号', 'value': f'**** **** **** {orders.purchaser.credit_card.card_number[-4:]}'},
+            
+            {'label': 'カード番号', 'value': orders.purchaser.credit_card.last_four_digits},
             {'label': 'セキュリティコード', 'value': orders.purchaser.credit_card.cvv},
+            {'label': '有効期限', 'value': orders.purchaser.credit_card.expiration_date},
         ]
-        context['card_expiration_date'] = convert_expiration_string_to_date(orders.purchaser.credit_card.card_expiration)
+        # context['card_expiration_date'] = orders.purchaser.credit_card.expiration_date
         context['order_details'] = orders.order_detail.all()
         return context
 
