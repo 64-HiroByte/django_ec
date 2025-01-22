@@ -15,6 +15,7 @@ from purchase.models import Order
 from purchase.models import OrderDetail
 from purchase.models import Purchaser
 from purchase.utils import convert_expiration_string_to_date
+from purchase.utils import delete_from_session
 from purchase.utils import redirect_if_invalid
 
 
@@ -63,8 +64,9 @@ class PurchaseView(View):
                 cart.delete()
             
                 # セッションから購入者情報を削除
-                del request.session['cart']
-                del request.session['purchaser']
+                # del request.session['cart']
+                # del request.session['purchaser']
+                delete_from_session(request.session, Cart, Purchaser)
                 
                 messages.success(request, '購入ありがとうございます')
                 return redirect(redirect_url)

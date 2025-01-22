@@ -34,7 +34,7 @@ class Purchaser(models.Model):
         given_name(str): 氏名の名の部分（last_nameと同じ）
         email(str): メールアドレス
     """
-    PURCHASER_SESSION_KEY = 'purchaser'
+    SESSION_KEY = 'purchaser'
     
     user_name = models.CharField(verbose_name='ユーザーネーム', max_length=255)
     family_name = models.CharField(verbose_name='姓', max_length=255)
@@ -47,25 +47,25 @@ class Purchaser(models.Model):
         db_table = 'purchasers'
     
     @classmethod
-    def save_to_session(cls, session, purchaser_id, session_key=PURCHASER_SESSION_KEY):
+    def save_to_session(cls, session, purchaser_id, session_key=SESSION_KEY):
         """
         セッションに購入者情報を保存する
         
         Args:
             session(SessionBase): リクエストのセッション情報
             purchaser_id(int): 購入者ID
-            session_key(str, optional): セッション内で購入者IDを保持するキー（初期値: PURCHASER_SESSION_KEY）
+            session_key(str, optional): セッション内で購入者IDを保持するキー（初期値: SESSION_KEY）
         """
         session[session_key] = purchaser_id
     
     @classmethod
-    def load_from_session(cls, session, session_key=PURCHASER_SESSION_KEY):
+    def load_from_session(cls, session, session_key=SESSION_KEY):
         """
         セッションから購入者情報を取得する
         
         Args:
             session(SessionBase): リクエストのセッション情報
-            session_key(str, optional): セッション内で購入者IDを保持するキー（初期値: PURCHASER_SESSION_KEY）
+            session_key(str, optional): セッション内で購入者IDを保持するキー（初期値: SESSION_KEY）
         
         Returns:
             Purchaser: セッション内に保存されている購入者情報

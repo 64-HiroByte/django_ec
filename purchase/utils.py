@@ -5,28 +5,29 @@ from django.shortcuts import redirect
 
 
 def convert_expiration_string_to_date(expiration):
-        """
-        'MM/YY'形式で入力した文字列の月末日でdate型に変換する
+    """
+    'MM/YY'形式で入力した文字列の月末日でdate型に変換する
 
-        Args:
-            expiration (str): MM/YY形式で入力した月と年
+    Args:
+        expiration (str): MM/YY形式で入力した月と年
 
-        Returns:
-            date: YYYY-MM-DD に変換された日付（DDは末日）
-        """
-        expiration_m, expiration_y = expiration.split('/')
-        
-        expiration_y = 2000 + int(expiration_y)
-        expiration_m = int(expiration_m)
-        expiration_d = calendar.monthrange(expiration_y, expiration_m)[1]
-        expiration_date = datetime.date(expiration_y, expiration_m, expiration_d)
-        return expiration_date
+    Returns:
+        date: YYYY-MM-DD に変換された日付（DDは末日）
+    """
+    expiration_m, expiration_y = expiration.split('/')
+    
+    expiration_y = 2000 + int(expiration_y)
+    expiration_m = int(expiration_m)
+    expiration_d = calendar.monthrange(expiration_y, expiration_m)[1]
+    expiration_date = datetime.date(expiration_y, expiration_m, expiration_d)
+    return expiration_date
 
 
 def save_purchase_related_data(purchaser, related_data_forms):
     """
     購入者に関連する情報を保存する
-    args:
+    
+    Args:
         purchaser (Purchaser): 購入者のインスタンス
         related_data_forms (list): 購入者に関連する情報のフォームのリスト
     """
@@ -39,7 +40,8 @@ def save_purchase_related_data(purchaser, related_data_forms):
 def redirect_if_invalid(cart=None, purchaser_pk=None, redirect_url=None):
     """
     カートがない、または、数量が０の場合、または、購入者情報がない場合、リダイレクトする
-    args:
+    
+    Args:
         cart (Cart): カートのインスタンス
         purchaser_pk (int): 購入者のプライマリーキー
         redirect_url (str): リダイレクト先のURL
@@ -50,3 +52,17 @@ def redirect_if_invalid(cart=None, purchaser_pk=None, redirect_url=None):
     if (cart is None or getattr(cart, 'quantities', 0) == 0) or purchaser_pk is None:
         return redirect(redirect_url)
     return None
+
+
+def delete_from_session(session, *models):
+    """
+    モデルのセッションキーが存在する場合に削除する
+
+    Args:
+        session (SessionBase): リクエストのセッション情報
+        *models(Model): SESSION_KEYを持つモデルクラス
+    """
+    for model in models:
+        session_key = getattr(model, 'SESSION_KEY', None)
+        if session_key in session:
+            del session[session_key]

@@ -15,7 +15,7 @@ class Cart(models.Model):
         create_cart: カートインスタンスの新規作成（classmethod）
         get_total_price: カート内の商品の合計金額
     """
-    CART_SESSION_KEY = 'cart'
+    SESSION_KEY = 'cart'
     
     # fields
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
@@ -25,14 +25,14 @@ class Cart(models.Model):
         db_table = 'carts'
     
     @classmethod
-    def load_from_session(cls, session, session_key=CART_SESSION_KEY):
+    def load_from_session(cls, session, session_key=SESSION_KEY):
         """
         セッションからカートIDを取得し、カートインスタンスを返す。
         カートIDが存在しない場合は、Noneを返す。
 
         Args:
             session (SessionBase): リクエストのセッション情報
-            session_key (str, optional): セッション内でカートIDを保持するキー（初期値: CART_SESSION_KEY）
+            session_key (str, optional): セッション内でカートIDを保持するキー（初期値: SESSION_KEY）
 
         Returns:
             Optional[Cart]: カートのインスタンス、カートが存在しない場合 None
@@ -46,13 +46,13 @@ class Cart(models.Model):
         return None
     
     @classmethod
-    def create_cart(cls, session, session_key=CART_SESSION_KEY):
+    def create_cart(cls, session, session_key=SESSION_KEY):
         """
         カートを新規作成し、DBとセッションに登録する。
 
         Args:
             session (SessionBase): リクエストのセッション情報
-            session_key (str, optional): セッション内でカートIDを保持するキー（初期値: CART_SESSION_KEY）
+            session_key (str, optional): セッション内でカートIDを保持するキー（初期値: SESSION_KEY）
 
         Returns:
             Cart: カートのインスタンス
