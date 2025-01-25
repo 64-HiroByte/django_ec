@@ -66,3 +66,39 @@ def delete_from_session(session, *models):
         session_key = getattr(model, 'SESSION_KEY', None)
         if session_key in session:
             del session[session_key]
+
+def create_dict(keys, values):
+    """
+    キーと値のリスト（タプル）から辞書を作成する
+
+    Args:
+        keys (list or tuple): 辞書のキー
+        values (list or tuple):辞書の値
+
+    Returns:
+        dict: 辞書を返す。キーと値の要素の長さが一致しない場合は例外（ValueError)が発生する
+    """
+    if len(keys) != len(values):
+        raise ValueError('keysとvaluesの要素の長さが一致していません')
+
+    return dict(zip(keys, values))
+
+def create_information_dict(html_template_keys, mail_template_keys, values):
+    """
+    HTMLテンプレート、メールテンプレートで使用する情報をまとめた辞書を作成する
+
+    Args:
+        html_template_keys (list or tuple): HTMLテンプレートで使用する辞書のキー
+        mail_template_keys (list or tuple): メールテンプレートで使用する辞書のキー
+        values (list or tuple): HTML,メールテンプレートで使用する辞書の値
+
+    Returns:
+        dict: HTML, メールテンプレートで使用する情報をまとめた辞書
+    """
+    html_template_dict = create_dict(html_template_keys,values)
+    mail_template_dict = create_dict(mail_template_keys, values)
+    information_dict = {
+        'html_template': html_template_dict,
+        'mail_template': mail_template_dict
+    }
+    return information_dict

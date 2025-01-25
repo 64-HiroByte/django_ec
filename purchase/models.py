@@ -1,6 +1,7 @@
 from django.db import models
 
 from purchase.utils import convert_expiration_string_to_date
+from purchase.utils import create_information_dict
 from purchase.varidators import ValidateDigitsNumber
 from purchase.varidators import validate_expiration_date
 from shop.models import Item
@@ -86,8 +87,16 @@ class Purchaser(models.Model):
         """
         return f'{self.family_name} {self.given_name}'
     
+    @property
+    def informations(self):
+        html_template_keys = ('氏名', 'ユーザーネーム', 'メールアドレス')
+        mail_template_keys = ('full_name', 'user_name', 'email')
+        values = (self.full_name, self.user_name, self.email)
+        return create_information_dict(html_template_keys, mail_template_keys, values)
+
     def __str__(self):
         return f'{self.full_name}@{self.user_name}'
+
 
 class ShippingAddress(models.Model):
     """
@@ -132,6 +141,13 @@ class ShippingAddress(models.Model):
         if self.building:
             full_address += f'\n{self.building}'
         return full_address
+    
+    @property
+    def informations(self):
+        html_template_keys = ('郵便番号', '配送先住所')
+        mail_template_keys = ('zip_code', 'full_address')
+        values = (self.zip_code, self.full_address)
+        return create_information_dict(html_template_keys, mail_template_keys, values)
     
     def __str__(self):
         return f'{self.purchaser.full_name} - {self.full_address}'
@@ -200,8 +216,15 @@ class CreditCard(models.Model):
         """
         return convert_expiration_string_to_date(self.card_expiration)
     
+    @property
+    def informations(self):
+        html_template_keys = ('カード名義人', 'カード番号', '有効期限')
+        mail_template_keys = ('cardholder', 'card_number', 'expiration')
+        values = (self.cardholder, self.card_number, self.expiration_date)
+        return create_information_dict(html_template_keys, mail_template_keys, values)
+    
     def __str__(self):
-        return f'{self.purchaser.full_name} - {self.last_four_digits})'
+        return f'{self.purchaser.full_name} - {self.last_four_digits}'
 
 
 class Order(models.Model):
