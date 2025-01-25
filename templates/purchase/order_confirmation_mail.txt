@@ -1,4 +1,4 @@
-${purchaser_name} 様\n
+${full_name} 様\n
 \n
 \n
 この度は、「A子のぼたもち」をご利用いただきまして誠にありがとうございます。\n
@@ -7,18 +7,19 @@ ${purchaser_name} 様\n
 
 注文番号: ${order_number}\n
 注文日時: ${order_date}\n
-購入者氏名: ${purchaser_name}\n
-ユーザーネーム: ${purchaser_username}\n
-メールアドレス: ${purchaser_email}\n
+購入者氏名: ${full_name}\n
+ユーザーネーム: ${username}\n
+メールアドレス: ${email}\n
 \n
 【お届け先】\n
 〒 ${zip_code}\n
-${shipping_address}\n
+${full_address}\n
 \n
 【クレジットカード】\n
 カード名義人: ${cardholder}\n
-カード番号: **** **** **** ${credit_card_last_four_digits}\n
-
+カード番号: ${card_number}\n
+有効期限: ${expiration_date}\n
+\n
 【ご注文内容】\n
 ${order_details}\n
 \n

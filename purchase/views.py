@@ -14,7 +14,6 @@ from cart.models import CartItem
 from purchase.models import Order
 from purchase.models import OrderDetail
 from purchase.models import Purchaser
-from purchase.utils import convert_expiration_string_to_date
 from purchase.utils import delete_from_session
 from purchase.utils import get_template_dict
 from purchase.utils import redirect_if_invalid
@@ -29,16 +28,6 @@ class PurchaseView(View):
         purchaser_pk = Purchaser.load_from_session(request.session)
         redirect_url = 'shop:item-list'
         
-        # カートがない、または、数量が０の場合、トップページへリダイレクト
-        # if cart is None or cart.quantities == 0:
-        #     return redirect('shop:item-list')
-        
-        # purchaser_pk = request.session.get('purchaser')
-        # セッションに購入者情報がない場合、トップページへリダイレクト
-        # if purchaser_pk is None:
-        #     return redirect('shop:item-list')
-        # else:
-            # purchaser = Purchaser.objects.get(pk=purchaser_pk)
         redirect_if_invalid(cart=cart, purchaser_pk=purchaser_pk, redirect_url=redirect_url)
         
         purchaser = Purchaser.objects.get(pk=purchaser_pk)
@@ -63,10 +52,8 @@ class PurchaseView(View):
                     )
                 # カートの中身を削除
                 cart.delete()
-            
+
                 # セッションから購入者情報を削除
-                # del request.session['cart']
-                # del request.session['purchaser']
                 delete_from_session(request.session, Cart, Purchaser)
                 
                 messages.success(request, '購入ありがとうございます')
@@ -101,16 +88,7 @@ class OrderDetailView(DetailView):
     context_object_name = 'orders'
     
     def get_queryset(self):
-        return (
-            Order.objects
-            .select_related(
-                'purchaser',
-                'purchaser__shipping_address',
-                'purchaser__shipping_address__prefecture',
-                'purchaser__credit_card'
-            )
-            .prefetch_related('order_detail__item')
-        )
+        return Order.get_order_queryset()
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -131,20 +109,9 @@ class OrderDetailView(DetailView):
         
         context['purchaser_infos'] = informations_list
         
-        # context['purchaser_infos'] = [
-        #     {'label': '氏名', 'value': f'{orders.purchaser.full_name}'},
-        #     {'label': 'ユーザーネーム', 'value': orders.purchaser.user_name},
-        #     {'label': 'メールアドレス', 'value': orders.purchaser.email},
-            
-        #     {'label': '郵便番号', 'value': orders.purchaser.shipping_address.zip_code},
-        #     {'label': '配送先住所', 'value': orders.purchaser.shipping_address.full_address},
-        #     {'label': 'カード名義人', 'value': orders.purchaser.credit_card.cardholder},
-            
-        #     {'label': 'カード番号', 'value': orders.purchaser.credit_card.last_four_digits},
-        #     {'label': 'セキュリティコード', 'value': orders.purchaser.credit_card.cvv},
-        #     {'label': '有効期限', 'value': orders.purchaser.credit_card.expiration_date},
-        # ]
         context['order_details'] = orders.order_detail.all()
+        for ordered_item in context['order_details']:
+            print(f'{ordered_item.item.name}: {ordered_item.item.price}円 x {ordered_item.quantity} = {ordered_item.sub_total}円')
         return context
 
 
@@ -152,10 +119,18 @@ class SendOrderMailView(View):
     """
     注文情報をメールで送信するビュー
     """
+    SUBJECT = 'ご注文ありがとうございます'
+    FROM_EMAIL_ADDRESS = 'hiorbyte@gmail.com'
+    
     def get(self, request, *args, **kwargs):
-        subject = "題名"
+        order = Order.load_from_session(request.session)
+        if order is None:
+            messages.error(request, '注文情報が見つかりません')
+            return redirect('shop:item-list')
+        
+        subject = self.SUBJECT
         message = "本文"
-        from_email = "hiorbyte@gmail.com"
+        from_email = self.FROM_EMAIL_ADDRESS
         recipient_list = [
             "hiorbyte@gmail.com"
         ]

@@ -235,6 +235,8 @@ class Order(models.Model):
         purchaser(ForeignKey): 関連する購入者（多対１リレーション）
         total_price(int): 注文の合計金額
     """
+    SESSION_KEY = 'order'
+    
     purchaser = models.ForeignKey(Purchaser, on_delete=models.PROTECT, related_name='purchaser')
     total_price = models.IntegerField(verbose_name='合計金額')
     created_at = models.DateTimeField(verbose_name='購入日', auto_now_add=True)
@@ -243,6 +245,53 @@ class Order(models.Model):
     class Meta:
         db_table = 'orders'
         ordering = ['-created_at']
+    
+    @classmethod
+    def save_to_session(cls, session, order_id, session_key=SESSION_KEY):
+        """
+        セッションに注文情報を保存する
+        
+        Args:
+            session(SessionBase): リクエストのセッション情報
+            order_id(int): 注文ID
+            session_key(str, optional): セッション内で注文IDを保持するキー（初期値: SESSION_KEY）
+        """
+        session[session_key] = order_id
+    
+    @classmethod
+    def load_from_session(cls, session, session_key=SESSION_KEY):
+        """
+        セッションから注文情報を取得する
+        
+        Args:
+            session(SessionBase): リクエストのセッション情報
+            session_key(str, optional): セッション内で購入者IDを保持するキー（初期値: SESSION_KEY）
+        
+        Returns:
+            Order: セッション内に保存されている注文情報
+        """
+        order_id = session.get(session_key)
+        if order_id is None:
+            return None
+        return cls.objects.get(pk=order_id)
+    
+    @classmethod
+    def get_order_queryset(cls):
+        """
+        Orderモデルのクエリセットを取得する
+
+        Returns:
+            Queryset: 購入者情報、注文明細を関連付けたクエリセット
+        """
+        return (
+            cls.objects.select_related(
+                'purchaser',
+                'purchaser__shipping_address',
+                'purchaser__shipping_address__prefecture',
+                'purchaser__credit_card'
+            )
+            .prefetch_related('order_detail__item')
+        )
     
     def __str__(self):
         return f'{self.created_at}: {self.purchaser.full_name}'
