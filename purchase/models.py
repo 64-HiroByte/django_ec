@@ -220,7 +220,7 @@ class CreditCard(models.Model):
     def informations(self):
         html_template_keys = ('カード名義人', 'カード番号', '有効期限')
         mail_template_keys = ('cardholder', 'card_number', 'expiration')
-        values = (self.cardholder, self.card_number, self.expiration_date)
+        values = (self.cardholder, self.last_four_digits, self.expiration_date)
         return create_information_dict(html_template_keys, mail_template_keys, values)
     
     def __str__(self):

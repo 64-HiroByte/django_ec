@@ -16,6 +16,7 @@ from purchase.models import OrderDetail
 from purchase.models import Purchaser
 from purchase.utils import convert_expiration_string_to_date
 from purchase.utils import delete_from_session
+from purchase.utils import get_template_dict
 from purchase.utils import redirect_if_invalid
 
 
@@ -114,26 +115,35 @@ class OrderDetailView(DetailView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         orders = self.object
+        purchaser = orders.purchaser
+        shipping_address = orders.purchaser.shipping_address
+        credit_card = orders.purchaser.credit_card
         
-        # full_address = f'{orders.purchaser.shipping_address.prefecture}{orders.purchaser.shipping_address.address}'
+        template_dict = get_template_dict(
+            purchaser, shipping_address, credit_card, 
+            attr_name='informations', 
+            template_key='html_template'
+        )
         
-        # if orders.purchaser.shipping_address.building:
-        #     full_address += f'\n{orders.purchaser.shipping_address.building}'
-            
-        context['purchaser_infos'] = [
-            {'label': '氏名', 'value': f'{orders.purchaser.full_name}'},
-            {'label': 'ユーザーネーム', 'value': orders.purchaser.user_name},
-            {'label': 'メールアドレス', 'value': orders.purchaser.email},
-            
-            {'label': '郵便番号', 'value': orders.purchaser.shipping_address.zip_code},
-            {'label': '配送先住所', 'value': orders.purchaser.shipping_address.full_address},
-            {'label': 'カード名義人', 'value': orders.purchaser.credit_card.cardholder},
-            
-            {'label': 'カード番号', 'value': orders.purchaser.credit_card.last_four_digits},
-            {'label': 'セキュリティコード', 'value': orders.purchaser.credit_card.cvv},
-            {'label': '有効期限', 'value': orders.purchaser.credit_card.expiration_date},
+        informations_list = [
+            {'label': key, 'value': value} for key, value in template_dict.items()
         ]
-        # context['card_expiration_date'] = orders.purchaser.credit_card.expiration_date
+        
+        context['purchaser_infos'] = informations_list
+        
+        # context['purchaser_infos'] = [
+        #     {'label': '氏名', 'value': f'{orders.purchaser.full_name}'},
+        #     {'label': 'ユーザーネーム', 'value': orders.purchaser.user_name},
+        #     {'label': 'メールアドレス', 'value': orders.purchaser.email},
+            
+        #     {'label': '郵便番号', 'value': orders.purchaser.shipping_address.zip_code},
+        #     {'label': '配送先住所', 'value': orders.purchaser.shipping_address.full_address},
+        #     {'label': 'カード名義人', 'value': orders.purchaser.credit_card.cardholder},
+            
+        #     {'label': 'カード番号', 'value': orders.purchaser.credit_card.last_four_digits},
+        #     {'label': 'セキュリティコード', 'value': orders.purchaser.credit_card.cvv},
+        #     {'label': '有効期限', 'value': orders.purchaser.credit_card.expiration_date},
+        # ]
         context['order_details'] = orders.order_detail.all()
         return context
 

@@ -90,7 +90,7 @@ def create_information_dict(html_template_keys, mail_template_keys, values):
     Args:
         html_template_keys (list or tuple): HTMLテンプレートで使用する辞書のキー
         mail_template_keys (list or tuple): メールテンプレートで使用する辞書のキー
-        values (list or tuple): HTML,メールテンプレートで使用する辞書の値
+        values (list or tuple): HTML, メールテンプレートで使用する辞書の値
 
     Returns:
         dict: HTML, メールテンプレートで使用する情報をまとめた辞書
@@ -102,3 +102,46 @@ def create_information_dict(html_template_keys, mail_template_keys, values):
         'mail_template': mail_template_dict
     }
     return information_dict
+
+
+def get_template_dict(*models, attr_name=None, template_key=None):
+    """
+    モデルから指定した属性とキーを利用してテンプレート辞書を作成する
+
+    Args:
+        models(Model): テンプレート辞書を取得するモデル（可変長引数）
+        attr_name (str): 取得する属性名。必須（None以外の属性名）
+        template_key (str): テンプレート辞書のキー。必須。
+
+    Raises:
+        ValueError: attr_nameがNoneの場合
+        AttributeError: モデルに指定したattr_nameが存在しない場合
+        KeyError: 指定されたキーがattr_name内に存在しない場合
+        TypeError: 指定されたキーの値が辞書型でない場合
+
+    Returns:
+        dict: モデルから取得したテンプレート辞書を連結した辞書
+    """
+    if attr_name is None:
+        raise ValueError('引数 attr_nameに取得する属性を渡す必要があります')
+    template_dict = {}
+    for model in models:
+        try:
+            informations = getattr(model, attr_name, None)
+            if informations is None:
+                raise AttributeError(f'"{attr_name}"プロパティが{model.__class__.__name__}モデルに存在しません')
+            
+            if template_key not in informations:
+                raise KeyError(f'{template_key} が {model.__class__.__name__}.{attr_name} に存在しません')
+            
+            template_value = informations[template_key]
+            
+            if not isinstance(template_value, dict):
+                raise TypeError(f'{template_key}の値は辞書型である必要があります')
+            
+            template_dict.update(template_value)
+            
+        except (AttributeError, KeyError, TypeError) as err:
+            raise type(err)(f'{err} (Model: {model.__class__.__name__}) from err')
+        
+    return template_dict
