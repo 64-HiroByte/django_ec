@@ -1,7 +1,9 @@
 from basicauth.decorators import basic_auth_required
+from django.template.loader import render_to_string
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.db import transaction
+from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
@@ -92,7 +94,7 @@ class OrderDetailView(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        orders = self.object
+        orders = self.object  # orders --> orderでもいいのではないか？
         purchaser = orders.purchaser
         shipping_address = orders.purchaser.shipping_address
         credit_card = orders.purchaser.credit_card
@@ -121,18 +123,43 @@ class SendOrderMailView(View):
     """
     SUBJECT = 'ご注文ありがとうございます'
     FROM_EMAIL_ADDRESS = 'hiorbyte@gmail.com'
+    template_name = '/templates/purchase/order_confirmation_mail.txt'
     
     def get(self, request, *args, **kwargs):
-        order = Order.load_from_session(request.session)
-        if order is None:
+        order_id = Order.load_from_session(request.session)
+        if order_id is None:
             messages.error(request, '注文情報が見つかりません')
             return redirect('shop:item-list')
         
+        # クエリセット取得
+        order_queryset = Order.get_order_queryset()
+        order = get_object_or_404(order_queryset, id=order_id)
+        
+        # template_dict作成
+        purchaser = order.purchaser
+        shipping_address = order.purchaser.shipping_address
+        credit_card = order.purchaser.credit_card
+        
+        template_dict = get_template_dict(
+            purchaser, shipping_address, credit_card, 
+            attr_name='informations', 
+            template_key='mail_template'
+        )
+        
+        template_dict['order_details'] = order.order_detail.all()
+        template_dict['total_price'] = order.total_price
+        
+        # メールテンプレート呼び出し
+        message_body = render_to_string(self.template_name, template_dict)
+        # メールテンプレートに辞書を渡してメッセージ本文作成
+        
+        
         subject = self.SUBJECT
-        message = "本文"
+        message = message_body
         from_email = self.FROM_EMAIL_ADDRESS
         recipient_list = [
-            "hiorbyte@gmail.com"
+            purchaser.email, "hiorbyte@gmail.com"
         ]
         send_mail(subject, message, from_email, recipient_list, fail_silently=False)
-        return redirect('cart:checkout')
+        messages.success(request, '購入ありがとうございます')
+        return redirect('shop:item-list')

@@ -237,6 +237,7 @@ class Order(models.Model):
     """
     SESSION_KEY = 'order'
     
+    # Fields
     purchaser = models.ForeignKey(Purchaser, on_delete=models.PROTECT, related_name='purchaser')
     total_price = models.IntegerField(verbose_name='合計金額')
     created_at = models.DateTimeField(verbose_name='購入日', auto_now_add=True)
@@ -268,7 +269,7 @@ class Order(models.Model):
             session_key(str, optional): セッション内で購入者IDを保持するキー（初期値: SESSION_KEY）
         
         Returns:
-            Order: セッション内に保存されている注文情報
+            Order: Orderモデルのインスタンス（セッション情報がない場合はNone）
         """
         order_id = session.get(session_key)
         if order_id is None:

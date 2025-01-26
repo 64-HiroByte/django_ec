@@ -4,7 +4,6 @@ import datetime
 from django.shortcuts import redirect
 
 
-
 def convert_expiration_string_to_date(expiration):
     """
     'MM/YY'形式で入力した文字列の月末日でdate型に変換する

@@ -1,27 +1,31 @@
-${full_name} 様\n
-\n
-\n
-この度は、「A子のぼたもち」をご利用いただきまして誠にありがとうございます。\n
-以下の内容でご注文を承りました。\n
-\n
+{% load humanize %}
+{{ full_name }} 様
 
-注文番号: ${order_number}\n
-注文日時: ${order_date}\n
-購入者氏名: ${full_name}\n
-ユーザーネーム: ${username}\n
-メールアドレス: ${email}\n
-\n
-【お届け先】\n
-〒 ${zip_code}\n
-${full_address}\n
-\n
-【クレジットカード】\n
-カード名義人: ${cardholder}\n
-カード番号: ${card_number}\n
-有効期限: ${expiration_date}\n
-\n
-【ご注文内容】\n
-${order_details}\n
-\n
-【合計金額】\n
-合計金額: ${total} 円\n
+
+この度は、「A子のぼたもち」をご利用いただきまして誠にありがとうございます。
+以下の内容でご注文を承りました。
+
+
+注文番号: {{ order.pk }}
+注文日時: {{ order.created_at | date:"Y年m月d日 H:i"}}
+購入者氏名: {{ full_name }}
+ユーザーネーム: {{ username }}
+メールアドレス: {{ email }}
+
+【お届け先】
+〒 {{ zip_code }}
+{{ full_address }}
+
+【クレジットカード】
+カード名義人: {{ cardholder }}
+カード番号: {{ card_number }}
+有効期限: {{ expiration_date | date:"Y年m月d日" }}
+
+【ご注文内容】
+{% for ordered_item in order_details %}
+{{ ordered_item.item.name | unordered_list}}: {{ ordered_item.item.price | intcomma }}円 x {{ordered_item.quantity}}点 = {{ ordered_item.sub_total | intcomma}}
+{% endfor %}
+
+--------------------------------------------------
+【合計金額】
+合計金額: {{ total_price }} 円
