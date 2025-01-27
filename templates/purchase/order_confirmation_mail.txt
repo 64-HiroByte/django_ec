@@ -6,10 +6,10 @@
 以下の内容でご注文を承りました。
 
 
-注文番号: {{ order.pk }}
+注文番号: {{ order.id }}
 注文日時: {{ order.created_at | date:"Y年m月d日 H:i"}}
 購入者氏名: {{ full_name }}
-ユーザーネーム: {{ username }}
+ユーザーネーム: {{ user_name }}
 メールアドレス: {{ email }}
 
 【お届け先】
@@ -23,9 +23,9 @@
 
 【ご注文内容】
 {% for ordered_item in order_details %}
-{{ ordered_item.item.name | unordered_list}}: {{ ordered_item.item.price | intcomma }}円 x {{ordered_item.quantity}}点 = {{ ordered_item.sub_total | intcomma}}
+{{ ordered_item.item.name }}: {{ ordered_item.item.price | intcomma }}円 x {{ ordered_item.quantity }}点 = {{ ordered_item.sub_total | intcomma }}
 {% endfor %}
 
 --------------------------------------------------
 【合計金額】
-合計金額: {{ total_price }} 円
+合計金額: {{ order.total_price | intcomma }} 円

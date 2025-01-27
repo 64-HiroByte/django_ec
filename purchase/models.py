@@ -219,7 +219,7 @@ class CreditCard(models.Model):
     @property
     def informations(self):
         html_template_keys = ('カード名義人', 'カード番号', '有効期限')
-        mail_template_keys = ('cardholder', 'card_number', 'expiration')
+        mail_template_keys = ('cardholder', 'card_number', 'expiration_date')
         values = (self.cardholder, self.last_four_digits, self.expiration_date)
         return create_information_dict(html_template_keys, mail_template_keys, values)
     
@@ -266,15 +266,12 @@ class Order(models.Model):
         
         Args:
             session(SessionBase): リクエストのセッション情報
-            session_key(str, optional): セッション内で購入者IDを保持するキー（初期値: SESSION_KEY）
+            session_key(str, optional): セッション内で注文IDを保持するキー（初期値: SESSION_KEY）
         
         Returns:
-            Order: Orderモデルのインスタンス（セッション情報がない場合はNone）
+            int: セッション情報（注文ID）、セッション内にない場合はNoneを返す
         """
-        order_id = session.get(session_key)
-        if order_id is None:
-            return None
-        return cls.objects.get(pk=order_id)
+        return session.get(session_key)
     
     @classmethod
     def get_order_queryset(cls):

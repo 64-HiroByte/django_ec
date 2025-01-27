@@ -37,19 +37,19 @@ def save_purchase_related_data(purchaser, related_data_forms):
         related_data.save()
 
 
-def redirect_if_invalid(cart=None, purchaser_pk=None, redirect_url=None):
+def redirect_if_invalid(cart=None, purchaser=None, redirect_url=None):
     """
     カートがない、または、数量が０の場合、または、購入者情報がない場合、リダイレクトする
     
     Args:
         cart (Cart): カートのインスタンス
-        purchaser_pk (int): 購入者のプライマリーキー
+        purchaser (Purchaser): 購入者のインスタンス
         redirect_url (str): リダイレクト先のURL
     
     returns:
         redirect: リダイレクト先のURL
     """
-    if (cart is None or getattr(cart, 'quantities', 0) == 0) or purchaser_pk is None:
+    if (cart is None or getattr(cart, 'quantities', 0) == 0) or purchaser is None:
         return redirect(redirect_url)
     return None
 

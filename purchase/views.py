@@ -27,12 +27,9 @@ class PurchaseView(View):
     """
     def get(self, request, *args, **kwargs):
         cart = Cart.load_from_session(request.session)
-        purchaser_pk = Purchaser.load_from_session(request.session)
-        redirect_url = 'shop:item-list'
+        purchaser = Purchaser.load_from_session(request.session)
         
-        redirect_if_invalid(cart=cart, purchaser_pk=purchaser_pk, redirect_url=redirect_url)
-        
-        purchaser = Purchaser.objects.get(pk=purchaser_pk)
+        redirect_if_invalid(cart=cart, purchaser=purchaser, redirect_url='shop:item-list')
         
         try:
             with transaction.atomic():
@@ -55,11 +52,12 @@ class PurchaseView(View):
                 # カートの中身を削除
                 cart.delete()
 
-                # セッションから購入者情報を削除
+                # セッションからカートと購入者情報を削除
                 delete_from_session(request.session, Cart, Purchaser)
+                # セッションに注文情報を保存
+                Order.save_to_session(request.session, order.pk)
                 
-                messages.success(request, '購入ありがとうございます')
-                return redirect(redirect_url)
+                return redirect('purchase:mail')
             
         except Exception as err:
             messages.error(request, f'エラーが発生しました（{err}）')
@@ -87,17 +85,17 @@ class OrderDetailView(DetailView):
     """
     model = Order
     template_name = 'purchase/order_detail.html'
-    context_object_name = 'orders'
+    # context_object_name = 'orders'  # orderとordersの混在は紛らわしいので設定しない
     
     def get_queryset(self):
         return Order.get_order_queryset()
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        orders = self.object  # orders --> orderでもいいのではないか？
-        purchaser = orders.purchaser
-        shipping_address = orders.purchaser.shipping_address
-        credit_card = orders.purchaser.credit_card
+        order = self.object  # orders --> orderでもいいのではないか？
+        purchaser = order.purchaser
+        shipping_address = order.purchaser.shipping_address
+        credit_card = order.purchaser.credit_card
         
         template_dict = get_template_dict(
             purchaser, shipping_address, credit_card, 
@@ -108,12 +106,9 @@ class OrderDetailView(DetailView):
         informations_list = [
             {'label': key, 'value': value} for key, value in template_dict.items()
         ]
-        
+        context['order'] = order
         context['purchaser_infos'] = informations_list
-        
-        context['order_details'] = orders.order_detail.all()
-        for ordered_item in context['order_details']:
-            print(f'{ordered_item.item.name}: {ordered_item.item.price}円 x {ordered_item.quantity} = {ordered_item.sub_total}円')
+        context['order_details'] = order.order_detail.all()
         return context
 
 
@@ -123,7 +118,7 @@ class SendOrderMailView(View):
     """
     SUBJECT = 'ご注文ありがとうございます'
     FROM_EMAIL_ADDRESS = 'hiorbyte@gmail.com'
-    template_name = '/templates/purchase/order_confirmation_mail.txt'
+    template_name = 'purchase/order_confirmation_mail.txt'
     
     def get(self, request, *args, **kwargs):
         order_id = Order.load_from_session(request.session)
@@ -145,9 +140,8 @@ class SendOrderMailView(View):
             attr_name='informations', 
             template_key='mail_template'
         )
-        
+        template_dict['order'] = order
         template_dict['order_details'] = order.order_detail.all()
-        template_dict['total_price'] = order.total_price
         
         # メールテンプレート呼び出し
         message_body = render_to_string(self.template_name, template_dict)

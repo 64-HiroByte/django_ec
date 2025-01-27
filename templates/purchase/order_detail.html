@@ -2,7 +2,7 @@
 {% load static %}
 {% load humanize %}
 
-{% block pagetitle %}購入明細（注文番号： {{ orders.pk }}）{% endblock pagetitle %}
+{% block pagetitle %}購入明細（注文番号： {{ order.pk }}）{% endblock pagetitle %}
 
 {% block content %}
 <hr>
@@ -23,7 +23,7 @@
             </tr>
             <tr>
                 <td class="text-end pe-3">購入日時</td>
-                <td>{{ orders.created_at | date:"Y年m月d日 H:i" }}</td>
+                <td>{{ order.created_at | date:"Y年m月d日 H:i" }}</td>
             </tr>
             
             {% for purchaser_info in purchaser_infos %}
@@ -66,7 +66,7 @@
                 {% endfor %}
             </tbody>
         </table>
-        <h3 class="text-end mt-4 pe-3">合計金額: {{ orders.total_price | intcomma }} 円</h3>
+        <h3 class="text-end mt-4 pe-3">合計金額: {{ order.total_price | intcomma }} 円</h3>
     </div>
 </div>
 {% endblock content %}
