@@ -19,12 +19,12 @@
     <tbody>
         {% for order in orders %}
         <tr>
-            <td class="pe-4 text-end">{{ order.pk}}</td>
-            <td class="ps-4">{{ order.created_at | date:"Y-m-d H:i" }}</td>
-            <td class="ps-4">{{ order.purchaser }}</td>
-            <td class="pe-4 text-end">{{ order.total_price | intcomma }} 円</td>
+            <td class="align-middle pe-4 text-end">{{ order.pk}}</td>
+            <td class="align-middle ps-4">{{ order.created_at | date:"Y-m-d H:i" }}</td>
+            <td class="align-middle ps-4">{{ order.purchaser }}</td>
+            <td class="align-middle pe-4 text-end">{{ order.total_price | intcomma }} 円</td>
             <td>
-                <a href="{% url 'purchase:order-detail' order.pk %}" class="btn btn-secondary"><i class="bi bi-file-earmark-text-fill"></i>購入明細</a>
+                <a href="{% url 'purchase:order-detail' order.pk %}" class="align-middle btn btn-secondary"><i class="bi bi-file-earmark-text-fill"></i>購入明細</a>
             </td>
         </tr>
         {% endfor %}
