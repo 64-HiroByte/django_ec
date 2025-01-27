@@ -14,6 +14,7 @@ class Prefecture(models.Model):
     Fields:
         pref_name(str): 都道府県名
     """
+    # Fields
     pref_name = models.CharField(verbose_name='都道府県名', max_length=10)
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
@@ -37,7 +38,8 @@ class Purchaser(models.Model):
         email(str): メールアドレス
     """
     SESSION_KEY = 'purchaser'
-    
+
+    # Fields
     user_name = models.CharField(verbose_name='ユーザーネーム', max_length=255)
     family_name = models.CharField(verbose_name='姓', max_length=255)
     given_name = models.CharField(verbose_name='名', max_length=255)
@@ -63,14 +65,14 @@ class Purchaser(models.Model):
     @classmethod
     def load_from_session(cls, session, session_key=SESSION_KEY):
         """
-        セッションから購入者情報を取得する
+        セッションから購入者情報を取得し、インスタンスを返す
         
         Args:
             session(SessionBase): リクエストのセッション情報
             session_key(str, optional): セッション内で購入者IDを保持するキー（初期値: SESSION_KEY）
         
         Returns:
-            Purchaser: セッション内に保存されている購入者情報
+            Purchaser: Purchaserインスタンス（セッションに情報がない場合はNone）
         """
         purchaser_id = session.get(session_key)
         if purchaser_id is None:
@@ -89,6 +91,12 @@ class Purchaser(models.Model):
     
     @property
     def informations(self):
+        """
+        HTML、メールテンプレートで使用するキーと値をまとめた辞書を返す
+
+        Returns:
+            dict: HTML、メールテンプレートで使用するキーと値をまとめた辞書
+        """
         html_template_keys = ('氏名', 'ユーザーネーム', 'メールアドレス')
         mail_template_keys = ('full_name', 'user_name', 'email')
         values = (self.full_name, self.user_name, self.email)
@@ -111,8 +119,8 @@ class ShippingAddress(models.Model):
     """
     ZIP_CODE_LENGTH = 7
     
+    # Fields
     purchaser = models.OneToOneField(Purchaser, on_delete=models.CASCADE, related_name='shipping_address')
-    # 住所
     zip_code = models.CharField(
         verbose_name='郵便番号',
         max_length=ZIP_CODE_LENGTH,
@@ -144,6 +152,12 @@ class ShippingAddress(models.Model):
     
     @property
     def informations(self):
+        """
+        HTML、メールテンプレートで使用するキーと値をまとめた辞書を返す
+
+        Returns:
+            dict: HTML、メールテンプレートで使用するキーと値をまとめた辞書
+        """
         html_template_keys = ('郵便番号', '配送先住所')
         mail_template_keys = ('zip_code', 'full_address')
         values = (self.zip_code, self.full_address)
@@ -169,8 +183,8 @@ class CreditCard(models.Model):
     CARD_NUMBER_LENGTH = 16
     CVV_LENGTH = 3
     
+    # Fields
     purchaser = models.OneToOneField(Purchaser, on_delete=models.CASCADE, related_name='credit_card')
-    # クレジットカード
     cardholder = models.CharField(verbose_name='カード名義人', max_length=255)
     card_number = models.CharField(
         verbose_name='カード番号', 
@@ -199,7 +213,7 @@ class CreditCard(models.Model):
     @property
     def last_four_digits(self):
         """
-        クレジットカード番号の末尾4桁を返す
+        クレジットカード番号の末尾4桁を返す（末尾4桁以外は * で表示）
 
         Returns:
             str: 登録されたクレジットカードの末尾4桁
@@ -218,6 +232,12 @@ class CreditCard(models.Model):
     
     @property
     def informations(self):
+        """
+        HTML、メールテンプレートで使用するキーと値をまとめた辞書を返す
+
+        Returns:
+            dict: HTML、メールテンプレートで使用するキーと値をまとめた辞書
+        """
         html_template_keys = ('カード名義人', 'カード番号', '有効期限')
         mail_template_keys = ('cardholder', 'card_number', 'expiration_date')
         values = (self.cardholder, self.last_four_digits, self.expiration_date)
@@ -262,14 +282,14 @@ class Order(models.Model):
     @classmethod
     def load_from_session(cls, session, session_key=SESSION_KEY):
         """
-        セッションから注文情報を取得する
+        セッションから注文IDを取得する
         
         Args:
             session(SessionBase): リクエストのセッション情報
             session_key(str, optional): セッション内で注文IDを保持するキー（初期値: SESSION_KEY）
         
         Returns:
-            int: セッション情報（注文ID）、セッション内にない場合はNoneを返す
+            int: 注文ID、存在しない場合はNone
         """
         return session.get(session_key)
     
@@ -305,6 +325,7 @@ class OrderDetail(models.Model):
         quantity(int): 商品の数量
         sub_total(int): 商品の小計
     """
+    # Fields
     order = models.ForeignKey(Order, on_delete=models.PROTECT, related_name='order_detail')
     item  = models.ForeignKey(Item, on_delete=models.PROTECT)
     quantity = models.IntegerField(verbose_name='数量')

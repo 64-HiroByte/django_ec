@@ -5,6 +5,7 @@ from django.core.validators import RegexValidator
 
 from purchase import utils
 
+
 class ValidateDigitsNumber(RegexValidator):
     """
     指定された桁数の数字のみを受け付けるバリデータ

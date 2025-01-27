@@ -1,11 +1,11 @@
 from basicauth.decorators import basic_auth_required
-from django.template.loader import render_to_string
+from django.conf import settings
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.shortcuts import render
+from django.template.loader import render_to_string
 from django.utils.decorators import method_decorator
 from django.views.generic import DetailView
 from django.views.generic import ListView
@@ -26,9 +26,11 @@ class PurchaseView(View):
     購入処理（注文履歴・注文明細の登録）を行うビュー
     """
     def get(self, request, *args, **kwargs):
+        # セッションからインスタンスを生成
         cart = Cart.load_from_session(request.session)
         purchaser = Purchaser.load_from_session(request.session)
         
+        # インスタンスのバリデーションチェック
         redirect_if_invalid(cart=cart, purchaser=purchaser, redirect_url='shop:item-list')
         
         try:
@@ -41,7 +43,6 @@ class PurchaseView(View):
                 
                 # OrderDetailテーブルにCartItemテーブルの情報を保存
                 cart_items = CartItem.objects.select_related('item', 'cart').filter(cart_id=cart.pk)
-                
                 for cart_item in cart_items:
                     OrderDetail.objects.create(
                         order=order,
@@ -49,14 +50,13 @@ class PurchaseView(View):
                         quantity=cart_item.quantity,
                         sub_total=cart_item.sub_total,
                     )
-                # カートの中身を削除
+                
+                # カートの中身を削除し、セッションからカートと購入者情報を削除
                 cart.delete()
-
-                # セッションからカートと購入者情報を削除
                 delete_from_session(request.session, Cart, Purchaser)
+
                 # セッションに注文情報を保存
                 Order.save_to_session(request.session, order.pk)
-                
                 return redirect('purchase:mail')
             
         except Exception as err:
@@ -92,22 +92,24 @@ class OrderDetailView(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        order = self.object  # orders --> orderでもいいのではないか？
-        purchaser = order.purchaser
-        shipping_address = order.purchaser.shipping_address
-        credit_card = order.purchaser.credit_card
+        order = self.object
         
-        template_dict = get_template_dict(
-            purchaser, shipping_address, credit_card, 
-            attr_name='informations', 
-            template_key='html_template'
-        )
+        # template_dict作成
+        models = (
+            order.purchaser,
+            order.purchaser.shipping_address,
+            order.purchaser.credit_card
+            )
+        template_dict = get_template_dict(models, template_key='html_template')
         
+        # テンプレート内でイテレートするためのリストを作成し、contextに追加
         informations_list = [
             {'label': key, 'value': value} for key, value in template_dict.items()
         ]
-        context['order'] = order
         context['purchaser_infos'] = informations_list
+        
+        # その他必要な情報をcontextに追加
+        context['order'] = order
         context['order_details'] = order.order_detail.all()
         return context
 
@@ -116,8 +118,6 @@ class SendOrderMailView(View):
     """
     注文情報をメールで送信するビュー
     """
-    SUBJECT = 'ご注文ありがとうございます'
-    FROM_EMAIL_ADDRESS = 'hiorbyte@gmail.com'
     template_name = 'purchase/order_confirmation_mail.txt'
     
     def get(self, request, *args, **kwargs):
@@ -131,29 +131,30 @@ class SendOrderMailView(View):
         order = get_object_or_404(order_queryset, id=order_id)
         
         # template_dict作成
-        purchaser = order.purchaser
-        shipping_address = order.purchaser.shipping_address
-        credit_card = order.purchaser.credit_card
-        
-        template_dict = get_template_dict(
-            purchaser, shipping_address, credit_card, 
-            attr_name='informations', 
-            template_key='mail_template'
-        )
+        models = (
+            order.purchaser,
+            order.purchaser.shipping_address,
+            order.purchaser.credit_card
+            )
+        template_dict = get_template_dict(models, template_key='mail_template')
         template_dict['order'] = order
         template_dict['order_details'] = order.order_detail.all()
         
-        # メールテンプレート呼び出し
+        # メールテンプレート呼び出しとメール本文作成
         message_body = render_to_string(self.template_name, template_dict)
-        # メールテンプレートに辞書を渡してメッセージ本文作成
         
-        
-        subject = self.SUBJECT
+        # メール送信
+        subject = 'ご注文ありがとうございます'
         message = message_body
-        from_email = self.FROM_EMAIL_ADDRESS
+        from_email = settings.FROM_EMAIL_ADDRESS
         recipient_list = [
-            purchaser.email, "hiorbyte@gmail.com"
+            order.purchaser.email
         ]
         send_mail(subject, message, from_email, recipient_list, fail_silently=False)
+        
+        # セッションから注文情報を削除
+        delete_from_session(request.session, Order)
+        
+        # トップページへリダイレクトし、フラッシュメッセージを表示
         messages.success(request, '購入ありがとうございます')
         return redirect('shop:item-list')

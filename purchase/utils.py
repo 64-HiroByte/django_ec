@@ -29,7 +29,7 @@ def save_purchase_related_data(purchaser, related_data_forms):
     
     Args:
         purchaser (Purchaser): 購入者のインスタンス
-        related_data_forms (list): 購入者に関連する情報のフォームのリスト
+        related_data_forms (list): 購入者に紐づいたフォームのリスト
     """
     for related_data_form in related_data_forms:
         related_data = related_data_form.save(commit=False)
@@ -39,7 +39,7 @@ def save_purchase_related_data(purchaser, related_data_forms):
 
 def redirect_if_invalid(cart=None, purchaser=None, redirect_url=None):
     """
-    カートがない、または、数量が０の場合、または、購入者情報がない場合、リダイレクトする
+    カートまたは購入者がNone、またはカートの数量が0の場合、指定したURLへリダイレクトする
     
     Args:
         cart (Cart): カートのインスタンス
@@ -56,16 +56,17 @@ def redirect_if_invalid(cart=None, purchaser=None, redirect_url=None):
 
 def delete_from_session(session, *models):
     """
-    モデルのセッションキーが存在する場合に削除する
+    セッション情報から指定したモデルのセッションキーを削除する
 
     Args:
         session (SessionBase): リクエストのセッション情報
-        *models(Model): SESSION_KEYを持つモデルクラス
+        *models(Model): SESSION_KEYを持つモデルクラス（可変長引数）
     """
     for model in models:
         session_key = getattr(model, 'SESSION_KEY', None)
         if session_key in session:
             del session[session_key]
+
 
 def create_dict(keys, values):
     """
@@ -74,14 +75,18 @@ def create_dict(keys, values):
     Args:
         keys (list or tuple): 辞書のキー
         values (list or tuple):辞書の値
+        
+    Raises:
+        ValueError: キーと値の要素の長さが一致しない場合
 
     Returns:
-        dict: 辞書を返す。キーと値の要素の長さが一致しない場合は例外（ValueError)が発生する
+        dict: キーと値のリスト（タプル）から作成された辞書
     """
     if len(keys) != len(values):
         raise ValueError('keysとvaluesの要素の長さが一致していません')
 
     return dict(zip(keys, values))
+
 
 def create_information_dict(html_template_keys, mail_template_keys, values):
     """
@@ -104,14 +109,14 @@ def create_information_dict(html_template_keys, mail_template_keys, values):
     return information_dict
 
 
-def get_template_dict(*models, attr_name=None, template_key=None):
+def get_template_dict(models, attr_name='informations', template_key=None):
     """
     モデルから指定した属性とキーを利用してテンプレート辞書を作成する
 
     Args:
-        models(Model): テンプレート辞書を取得するモデル（可変長引数）
+        models(list or tuple): テンプレート辞書を取得するモデルのリスト（タプル）
         attr_name (str): 取得する属性名。必須（None以外の属性名）
-        template_key (str): テンプレート辞書のキー。必須。
+        template_key (str): テンプレート辞書のキー。'html_template'または'mail_template'（必須）
 
     Raises:
         ValueError: attr_nameがNoneの場合

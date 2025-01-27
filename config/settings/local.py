@@ -34,6 +34,9 @@ EMAIL_HOST_PASSWORD = env('SENDGRID_API_KEY')
 # 開発環境において、メール送信はコンソールに出力
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
+# メール送信元のアドレス
+FROM_EMAIL_ADDRESS = env('EMAIL_ADDRESS')
+
 '''
 #########################################################################
 
