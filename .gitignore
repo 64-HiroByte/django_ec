@@ -6,3 +6,6 @@ __pycache__/
 # 20241013-追記
 .DS_store
 db.sqlite3
+
+# 20250118-追記
+.DS_Store

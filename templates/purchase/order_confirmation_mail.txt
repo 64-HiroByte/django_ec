@@ -1,0 +1,31 @@
+{% load humanize %}
+{{ full_name }} 様
+
+
+この度は、「A子のぼたもち」をご利用いただきまして誠にありがとうございます。
+以下の内容でご注文を承りました。
+
+
+注文番号: {{ order.id }}
+注文日時: {{ order.created_at | date:"Y年m月d日 H:i"}}
+購入者氏名: {{ full_name }}
+ユーザーネーム: {{ user_name }}
+メールアドレス: {{ email }}
+
+【お届け先】
+〒 {{ zip_code }}
+{{ full_address }}
+
+【クレジットカード】
+カード名義人: {{ cardholder }}
+カード番号: {{ card_number }}
+有効期限: {{ expiration_date | date:"Y年m月d日" }}
+
+【ご注文内容】
+{% for ordered_item in order_details %}
+{{ ordered_item.item.name }}: {{ ordered_item.item.price | intcomma }}円 x {{ ordered_item.quantity }}点 = {{ ordered_item.sub_total | intcomma }}
+{% endfor %}
+
+--------------------------------------------------
+【合計金額】
+合計金額: {{ order.total_price | intcomma }} 円
