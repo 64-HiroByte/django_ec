@@ -4,6 +4,7 @@ import sys
 
 from django.core.management.base import BaseCommand
 from django.core.management.base import CommandError
+from django.db import transaction
 
 from promotion.models import PromotionCode
 
@@ -69,15 +70,46 @@ class Command(BaseCommand):
         return lower_limit, upper_limit, increment, code_length, generate_num
     
     def handle(self, *args, **options):
+        # オプションで渡された値のバリデーションチェック
         try:
             lower_limit, upper_limit, increment, code_length, generate_num = self.arguments_validator(options)
-        except CommandError as e:
-            self.stderr.write(self.style.ERROR(e))
+        except CommandError as err:
+            self.stderr.write(self.style.ERROR(err))
             sys.exit(1)
         
-        for _ in range(generate_num):
-            chars = string.ascii_letters + string.digits
-            generated_code = ''.join(random.choices(chars, k=code_length))
-            discount_amount = random.randrange(lower_limit, upper_limit + 1, increment)
-            print(f'code: {generated_code}, discount amount: {discount_amount}')
+        # コードの生成に使用する文字列
+        chars = string.ascii_letters + string.digits
+
+        # DBに登録済みのプロモーションコードを取得
+        existing_codes = set(PromotionCode.objects.values_list('code', flat=True))
         
+        generated_codes = set()
+        generated_promotions = []
+        
+        while len(generated_codes) < generate_num:
+            # プロモーションコードの文字列を生成し、重複チェックする
+            generated_code = ''.join(random.choices(chars, k=code_length))
+            if generated_code in existing_codes | generated_codes:
+                continue
+            
+            # 生成したプロモーションコードは重複チェックするため、setに追加する
+            generated_codes.add(generated_code)
+            
+            # 割引額の決定
+            discount_amount = random.randrange(lower_limit, upper_limit + 1, increment)
+            
+            # モデルのインスタンスをリストに追加
+            generated_promotions.append(
+                PromotionCode(code=generated_code, discount_amount=discount_amount)
+            )
+        
+        # DBへ一括登録
+        with transaction.atomic():
+            PromotionCode.objects.bulk_create(generated_promotions)
+        
+        success_message = f'{generate_num}個のプロモーションコードを新規作成しました（割引額: {lower_limit} 〜 {upper_limit}）'
+        self.stdout.write(self.style.SUCCESS(success_message))
+        
+        # 作成したコードの出力
+        for generated_promotion in generated_promotions:
+            self.stdout.write(f'code: {generated_promotion.code}, discount amount: {generated_promotion.discount_amount}')
