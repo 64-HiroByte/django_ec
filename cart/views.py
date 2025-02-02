@@ -10,6 +10,7 @@ from django.views.generic import View
 from cart.models import Cart
 from cart.models import CartItem
 from shop.models import Item
+from promotion.forms import PromotionCodeForm
 from purchase.forms import CreditCardForm
 from purchase.forms import PurchaserForm
 from purchase.forms import ShippingAddressForm
@@ -49,6 +50,10 @@ class DeleteFromCartView(View):
         messages.success(request, 'カートから商品を削除しました')
         return redirect('cart:checkout')
 
+class ApplyPromotionToCart(View):
+    def post(self, request, *args, **kwargs):
+        return
+
 class CheckoutView(FormView):
     """
     カートの中身を表示させるためのビュー
@@ -70,6 +75,7 @@ class CheckoutView(FormView):
     form_class = PurchaserForm
     shipping_address_form_class = ShippingAddressForm
     credit_card_form_class = CreditCardForm
+    promotion_cord_form_class = PromotionCodeForm
     
     primary_form_key = 'purchaser_form'
     
@@ -77,6 +83,7 @@ class CheckoutView(FormView):
         primary_form_key: form_class,
         'shipping_address_form': shipping_address_form_class,
         'credit_card_form': credit_card_form_class,
+        'promotion_cord_form': promotion_cord_form_class,
     }
     
     def get_related_data_forms(self, forms):

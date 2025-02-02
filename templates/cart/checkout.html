@@ -52,15 +52,13 @@
                     {% endfor %}
                     
                     <!-- promo code -->
-                    {% comment %}　　プロモコードは実装するまでコメントアウト
-                    <li class="list-group-item d-flex justify-content-between bg-body-tertiary">
+                    <li class="list-group-item d-flex justify-content-between bg-body-tertiary align-items-center">
                         <div class="text-success">
-                            <h6 class="my-0">Promo code</h6>
+                            <h6 class="my-0">プロモーションコード割引</h6>
                             <small>EXAMPLECODE</small>
                         </div>
-                        <span class="text-success">−$5</span>
+                        <span class="text-success me-5">−¥ 100</span>
                     </li>
-                    {% endcomment %}
                     
                     <!-- total price -->
                     <li class="list-group-item d-flex justify-content-between">
@@ -70,11 +68,23 @@
                 </ul>
                 
                 <!-- promo code form -->
-                <form class="card p-2">
+                <form method="post" action="{% url 'promotion:apply' %}" novalidate class="card p-2">
+                    {% csrf_token %}
                     <div class="input-group">
+                        {% comment %} 
                         <input type="text" class="form-control" placeholder="Promo code">
-                        <button type="submit" class="btn btn-secondary">Redeem</button>
+                        {% endcomment %}
+                        <label for="code" ></label>
+                        {{ promotion_cord_form.code }}
+                        <button type="submit" class="btn btn-secondary">適用</button>
                     </div>
+                    {% comment %}  
+                    <div class="invalid-feedback">
+                        {% for error in promotion_form.code.errors %}
+                            {{ error }}
+                        {% endfor %}
+                    </div>
+                    {% endcomment %}
                 </form>
                 {% endif %}
             </div>
@@ -114,8 +124,8 @@
                                 {{ purchaser_form.user_name }}
                                 <div class="invalid-feedback">
                                     {% for error in purchaser_form.user_name.errors %}
-                                    {{ error }}
-                                {% endfor %}
+                                        {{ error }}
+                                    {% endfor %}
                                 </div>
                             </div>
                         </div>
