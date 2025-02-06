@@ -35,4 +35,7 @@ class PromotionCodeForm(forms.Form):
         # 使用済みプロモーションコードであるか
         if not promotion.is_active:
             raise forms.ValidationError(f'"{code}"は既に使われています')
+        
+        # PromotionCodeのインスタンスをcleaned_dataに保存
+        self.cleaned_data['promotion'] = promotion
         return code

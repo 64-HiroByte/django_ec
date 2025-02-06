@@ -56,11 +56,15 @@ class ApplyPromotionToCart(View):
         form = PromotionCodeForm(request.POST)
         
         if form.is_valid():
-            print(form)
-            # PromotionCode.save_to_session(request.session, promotion_id=promotion.pk)
+            promotion = form.cleaned_data['promotion']
+            PromotionCode.save_to_session(
+                session=request.session, 
+                promotion_id=promotion.id
+            )
             messages.success(request, 'プロモーションコードを適用しました')
         else:
             print(f'エラーの内容: {form.errors["code"][0]}')
+            PromotionCode.delete_from_session(session=request.session)
             messages.error(request, '無効なプロモーションコードが入力されました')
         return redirect('cart:checkout')
 

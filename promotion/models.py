@@ -43,7 +43,7 @@ class PromotionCode(models.Model):
     @classmethod
     def save_to_session(cls, session, promotion_id, session_key=SESSION_KEY):
         """
-        セッションに適用しているプロモーションコードのIDを保存する
+        適用したプロモーションコードのIDをセッションに保存する
 
         Args:
             session (SessionBase): リクエストのセッション情報
@@ -51,6 +51,35 @@ class PromotionCode(models.Model):
             session_key(str, optional): セッション内でプロモーションコードのIDを保持するキー（初期値: SESSION_KEY）
         """
         session[session_key] = promotion_id
+    
+    @classmethod
+    def delete_from_session(cls, session, session_key=SESSION_KEY):
+        """
+        セッションに保存してあるプロモーションコードのIDを削除する
+        （セッションにプロモーションコードのIDが保存されていないことを考慮してpopメソッドを使用）
+
+        Args:
+            session (SessionBase): リクエストのセッション情報
+            session_key(str, optional): セッション内でプロモーションコードのIDを保持するキー（初期値: SESSION_KEY）
+        """
+        session.pop(session_key, None)
         
+    @classmethod
+    def load_from_session(cls, session, session_key=SESSION_KEY):
+        """
+        セッションからプロモーションコードの情報を取得し、インスタンスを返す
+        
+        Args:
+            session(SessionBase): リクエストのセッション情報
+            session_key(str, optional): セッション内でプロモーションコードのIDを保持するキー（初期値: SESSION_KEY）
+        
+        Returns:
+            PromotionCode: PromotionCodeインスタンス（セッションに情報がない場合はNone）
+        """
+        promotion_id = session.get(session_key)
+        if promotion_id is None:
+            return None
+        return cls.objects.get(pk=promotion_id)
+    
     def __str__(self):
         return f'{self.code}: {self.discount_amount}円'
