@@ -71,20 +71,15 @@
                 <form method="post" action="{% url 'promotion:apply' %}" novalidate class="card p-2">
                     {% csrf_token %}
                     <div class="input-group">
-                        {% comment %} 
-                        <input type="text" class="form-control" placeholder="Promo code">
-                        {% endcomment %}
                         <label for="code" ></label>
                         {{ promotion_cord_form.code }}
                         <button type="submit" class="btn btn-secondary">適用</button>
                     </div>
-                    {% comment %}  
                     <div class="invalid-feedback">
                         {% for error in promotion_form.code.errors %}
                             {{ error }}
                         {% endfor %}
                     </div>
-                    {% endcomment %}
                 </form>
                 {% endif %}
             </div>

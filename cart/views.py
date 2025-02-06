@@ -11,6 +11,7 @@ from cart.models import Cart
 from cart.models import CartItem
 from shop.models import Item
 from promotion.forms import PromotionCodeForm
+from promotion.models import PromotionCode
 from purchase.forms import CreditCardForm
 from purchase.forms import PurchaserForm
 from purchase.forms import ShippingAddressForm
@@ -52,7 +53,16 @@ class DeleteFromCartView(View):
 
 class ApplyPromotionToCart(View):
     def post(self, request, *args, **kwargs):
-        return
+        form = PromotionCodeForm(request.POST)
+        
+        if form.is_valid():
+            print(form)
+            # PromotionCode.save_to_session(request.session, promotion_id=promotion.pk)
+            messages.success(request, 'プロモーションコードを適用しました')
+        else:
+            print(f'エラーの内容: {form.errors["code"][0]}')
+            messages.error(request, '無効なプロモーションコードが入力されました')
+        return redirect('cart:checkout')
 
 class CheckoutView(FormView):
     """
@@ -121,6 +131,7 @@ class CheckoutView(FormView):
     
     def forms_valid_failure(self, forms, messages_level=messages.info, message=''):
         """
+        postメソッド実行時に使用
         バリデーションエラーまたはトランザクションエラー時の処理
         """
         context = self.get_context_data(**forms)
@@ -130,6 +141,7 @@ class CheckoutView(FormView):
     
     def forms_valid_successful(self, request, forms):
         """
+        postメソッド実行時に使用
         すべてのフォームのバリデーションが通った場合の処理
         """
         # DB保存処理を記述する

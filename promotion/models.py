@@ -18,6 +18,8 @@ class PromotionCode(models.Model):
     # 割引額の制約
     MIN_DISCOUNT_AMOUNT = 10
     MAX_DISCOUNT_AMOUNT = 10000
+    # セッションキー
+    SESSION_KEY = 'promotion'
     
     # Fields
     code = models.CharField(
@@ -38,5 +40,17 @@ class PromotionCode(models.Model):
         db_table = 'promotion_codes'
         ordering = ['id']
     
+    @classmethod
+    def save_to_session(cls, session, promotion_id, session_key=SESSION_KEY):
+        """
+        セッションに適用しているプロモーションコードのIDを保存する
+
+        Args:
+            session (SessionBase): リクエストのセッション情報
+            promotion_id(int): プロモーションコードのID
+            session_key(str, optional): セッション内でプロモーションコードのIDを保持するキー（初期値: SESSION_KEY）
+        """
+        session[session_key] = promotion_id
+        
     def __str__(self):
         return f'{self.code}: {self.discount_amount}円'
