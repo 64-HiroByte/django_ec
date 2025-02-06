@@ -120,12 +120,18 @@ class CheckoutView(FormView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cart = Cart.load_from_session(self.request.session)
+        promotion = PromotionCode.load_from_session(self.request.session)
         
         if cart is None:
             context['quantities_in_cart'] = 0
         else:
             context['cartitems'] = CartItem.objects.select_related('item', 'cart').filter(cart_id=cart.pk)
-            context['total_price'] = cart.get_total_price()
+            if promotion is None:
+                discount_amount = 0
+            else:
+                context['promotion'] = promotion
+                discount_amount = promotion.discount_amount
+            context['total_price'] = cart.get_total_price(discount_amount)
             context['quantities_in_cart'] = cart.quantities
         
         for form_name, form_class in self.form_classes.items():

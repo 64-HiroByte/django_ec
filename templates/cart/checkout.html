@@ -52,14 +52,16 @@
                     {% endfor %}
                     
                     <!-- promo code -->
+                    {% if promotion %}
                     <li class="list-group-item d-flex justify-content-between bg-body-tertiary align-items-center">
                         <div class="text-success">
                             <h6 class="my-0">プロモーションコード割引</h6>
-                            <small>EXAMPLECODE</small>
+                            <small>{{ promotion.code }} を適用</small>
                         </div>
-                        <span class="text-success me-5">−¥ 100</span>
+                        <span class="text-success me-5">−¥ {{ promotion.discount_amount | intcomma }}</span>
                     </li>
-                    
+                    {% endif %}
+
                     <!-- total price -->
                     <li class="list-group-item d-flex justify-content-between">
                         <span>合計</span>
