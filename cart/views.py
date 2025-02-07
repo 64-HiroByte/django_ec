@@ -51,7 +51,7 @@ class DeleteFromCartView(View):
         messages.success(request, 'カートから商品を削除しました')
         return redirect('cart:checkout')
 
-class ApplyPromotionToCart(View):
+class ApplyPromotionToCartView(View):
     def post(self, request, *args, **kwargs):
         form = PromotionCodeForm(request.POST)
         
@@ -67,6 +67,17 @@ class ApplyPromotionToCart(View):
             PromotionCode.delete_from_session(session=request.session)
             messages.error(request, '無効なプロモーションコードが入力されました')
         return redirect('cart:checkout')
+
+
+class CancelPromotionFromCartView(View):
+    """
+    カートに適用したプロモーションコードをキャンセルするビュー
+    """
+    def post(self, request, *args, **kwargs):
+        PromotionCode.delete_from_session(session=request.session)
+        messages.success(request, 'プロモーションコードの適用をキャンセルしました')
+        return redirect('cart:checkout')
+
 
 class CheckoutView(FormView):
     """

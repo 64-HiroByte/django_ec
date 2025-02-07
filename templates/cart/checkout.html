@@ -53,12 +53,20 @@
                     
                     <!-- promo code -->
                     {% if promotion %}
-                    <li class="list-group-item d-flex justify-content-between bg-body-tertiary align-items-center">
+                    <li class="list-group-item d-flex justify-content-between lh-sm">
                         <div class="text-success">
                             <h6 class="my-0">プロモーションコード割引</h6>
                             <small>{{ promotion.code }} を適用</small>
                         </div>
-                        <span class="text-success me-5">−¥ {{ promotion.discount_amount | intcomma }}</span>
+                        <div class="row g-2 align-items-center">
+                            <span class="col-auto text-success">−¥ {{ promotion.discount_amount | intcomma }}</span>
+                            
+                            <!-- 削除機能-->
+                            <form  class="col-auto" method="post" action="{% url 'promotion:cancel' %}">
+                                {% csrf_token %}
+                                <button class="btn btn-danger" type="submit"><i class="bi bi-trash"></i></button>
+                            </form>
+                        </div>
                     </li>
                     {% endif %}
 
