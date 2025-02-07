@@ -1,5 +1,6 @@
 from django.db import models
 
+from promotion.models import PromotionCode
 from purchase.utils import convert_expiration_string_to_date
 from purchase.utils import create_information_dict
 from purchase.varidators import ValidateDigitsNumber
@@ -259,6 +260,7 @@ class Order(models.Model):
     
     # Fields
     purchaser = models.ForeignKey(Purchaser, on_delete=models.PROTECT, related_name='purchaser')
+    promotion = models.ForeignKey(PromotionCode, on_delete=models.PROTECT, null=True, blank=True, related_name='promotion')
     total_price = models.IntegerField(verbose_name='合計金額')
     created_at = models.DateTimeField(verbose_name='購入日', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
