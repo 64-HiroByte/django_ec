@@ -27,5 +27,8 @@
 {% endfor %}
 
 --------------------------------------------------
+{% if order.promotion %}
+プロモーションコード（{{ order.promotion.code }}）割引適用: - {{ order.promotion.discount_amount | intcomma }}円
+{% endif %}
 【合計金額】
 合計金額: {{ order.total_price | intcomma }} 円

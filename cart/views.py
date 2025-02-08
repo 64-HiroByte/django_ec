@@ -2,9 +2,7 @@ from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.shortcuts import render
 from django.views.generic import FormView
-from django.views.generic import TemplateView
 from django.views.generic import View
 
 from cart.models import Cart
@@ -100,7 +98,7 @@ class CheckoutView(FormView):
     form_class = PurchaserForm
     shipping_address_form_class = ShippingAddressForm
     credit_card_form_class = CreditCardForm
-    promotion_cord_form_class = PromotionCodeForm
+    promotion_code_form_class = PromotionCodeForm
     
     primary_form_key = 'purchaser_form'
     
@@ -108,7 +106,7 @@ class CheckoutView(FormView):
         primary_form_key: form_class,
         'shipping_address_form': shipping_address_form_class,
         'credit_card_form': credit_card_form_class,
-        'promotion_cord_form': promotion_cord_form_class,
+        'promotion_code_form': promotion_code_form_class,
     }
     
     def get_related_data_forms(self, forms):
@@ -188,10 +186,11 @@ class CheckoutView(FormView):
             return self.forms_valid_failure(forms, messages_level=messages_level, message=message)
     
     def post(self, request, *args, **kwargs):
-        # フォームのインスタンスを生成し、辞書に格納
+        # フォームのインスタンスを生成し、辞書に格納（ただし、PromotionCodeFormは除外）
         forms = {}
         for form_name, form_cls in self.form_classes.items():
-            forms[form_name] = form_cls(request.POST)
+            if form_cls is not PromotionCodeForm:
+                forms[form_name] = form_cls(request.POST)
 
         # バリデーションを実行
         if all(form.is_valid() for form in forms.values()):

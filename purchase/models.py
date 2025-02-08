@@ -254,6 +254,7 @@ class Order(models.Model):
     
     Fields:
         purchaser(ForeignKey): 関連する購入者（多対１リレーション）
+        promotion(ForeignKey): 関連するプロモーションコード（多対１リレーション）
         total_price(int): 注文の合計金額
     """
     SESSION_KEY = 'order'
