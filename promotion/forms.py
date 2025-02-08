@@ -16,7 +16,6 @@ class PromotionCodeForm(forms.Form):
                 'class': 'form-control',
                 'id': 'code',
                 'placeholder': 'コードを入力してください',
-                # 'required': 'required'
         })
     )
     

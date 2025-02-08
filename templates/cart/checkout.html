@@ -85,11 +85,6 @@
                         {{ promotion_code_form.code }}
                         <button type="submit" class="btn btn-secondary">適用</button>
                     </div>
-                    <div class="invalid-feedback">
-                        {% for error in promotion_form.code.errors %}
-                            {{ error }}
-                        {% endfor %}
-                    </div>
                 </form>
                 {% endif %}
             </div>
