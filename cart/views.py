@@ -50,9 +50,13 @@ class DeleteFromCartView(View):
         return redirect('cart:checkout')
 
 class ApplyPromotionToCartView(View):
+    """
+    プロモーションコードをカートに適用するビュー
+    """
     def post(self, request, *args, **kwargs):
         form = PromotionCodeForm(request.POST)
         
+        # バリデーションの実行
         if form.is_valid():
             promotion = form.cleaned_data['promotion']
             PromotionCode.save_to_session(
@@ -62,6 +66,7 @@ class ApplyPromotionToCartView(View):
             messages.success(request, 'プロモーションコード割引を適用しました')
             return redirect('cart:checkout')
         else:
+            # バリデーションエラー時はセッションに保存してあるコードの情報を削除する
             PromotionCode.delete_from_session(session=request.session)
             messages.warning(request, form.errors['code'][0])
             return redirect('cart:checkout')
@@ -123,7 +128,7 @@ class CheckoutView(FormView):
         for form_name, form_class in forms.items():
             if form_name != self.primary_form_key:
                 related_data_forms.append(form_class)
-            
+        
         return related_data_forms
     
     def get_context_data(self, **kwargs):
@@ -131,15 +136,20 @@ class CheckoutView(FormView):
         cart = Cart.load_from_session(self.request.session)
         promotion = PromotionCode.load_from_session(self.request.session)
         
-        if cart is None:
+        if cart is None or cart.quantities == 0:
             context['quantities_in_cart'] = 0
+            # カートが空の場合、適用済みのプロモーションコードの情報はセッションから削除する
+            PromotionCode.delete_from_session(self.request.session)
         else:
             context['cartitems'] = CartItem.objects.select_related('item', 'cart').filter(cart_id=cart.pk)
+            
+            # プロモーションコード適用による割引額の設定
             if promotion is None:
                 discount_amount = 0
             else:
                 context['promotion'] = promotion
                 discount_amount = promotion.discount_amount
+            
             context['total_price'] = cart.get_total_price(discount_amount)
             context['quantities_in_cart'] = cart.quantities
         
