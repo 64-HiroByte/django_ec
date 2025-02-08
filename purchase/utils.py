@@ -88,7 +88,7 @@ def create_dict(keys, values):
     Args:
         keys (list or tuple): 辞書のキー
         values (list or tuple):辞書の値
-        
+    
     Raises:
         ValueError: キーと値の要素の長さが一致しない場合
 
@@ -113,7 +113,7 @@ def create_information_dict(html_template_keys, mail_template_keys, values):
     Returns:
         dict: HTML, メールテンプレートで使用する情報をまとめた辞書
     """
-    html_template_dict = create_dict(html_template_keys,values)
+    html_template_dict = create_dict(html_template_keys, values)
     mail_template_dict = create_dict(mail_template_keys, values)
     information_dict = {
         'html_template': html_template_dict,
