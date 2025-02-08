@@ -2,14 +2,14 @@ from django.contrib import messages
 from django.db import transaction
 from django.shortcuts import get_object_or_404
 from django.shortcuts import redirect
-from django.shortcuts import render
 from django.views.generic import FormView
-from django.views.generic import TemplateView
 from django.views.generic import View
 
 from cart.models import Cart
 from cart.models import CartItem
 from shop.models import Item
+from promotion.forms import PromotionCodeForm
+from promotion.models import PromotionCode
 from purchase.forms import CreditCardForm
 from purchase.forms import PurchaserForm
 from purchase.forms import ShippingAddressForm
@@ -49,6 +49,39 @@ class DeleteFromCartView(View):
         messages.success(request, 'カートから商品を削除しました')
         return redirect('cart:checkout')
 
+class ApplyPromotionToCartView(View):
+    """
+    プロモーションコードをカートに適用するビュー
+    """
+    def post(self, request, *args, **kwargs):
+        form = PromotionCodeForm(request.POST)
+        
+        # バリデーションの実行
+        if form.is_valid():
+            promotion = form.cleaned_data['promotion']
+            PromotionCode.save_to_session(
+                session=request.session, 
+                promotion_id=promotion.id
+            )
+            messages.success(request, 'プロモーションコード割引を適用しました')
+            return redirect('cart:checkout')
+        else:
+            # バリデーションエラー時はセッションに保存してあるコードの情報を削除する
+            PromotionCode.delete_from_session(session=request.session)
+            messages.warning(request, form.errors['code'][0])
+            return redirect('cart:checkout')
+
+
+class CancelPromotionFromCartView(View):
+    """
+    カートに適用したプロモーションコードをキャンセルするビュー
+    """
+    def post(self, request, *args, **kwargs):
+        PromotionCode.delete_from_session(session=request.session)
+        messages.success(request, 'プロモーションコード割引の適用をキャンセルしました')
+        return redirect('cart:checkout')
+
+
 class CheckoutView(FormView):
     """
     カートの中身を表示させるためのビュー
@@ -70,6 +103,7 @@ class CheckoutView(FormView):
     form_class = PurchaserForm
     shipping_address_form_class = ShippingAddressForm
     credit_card_form_class = CreditCardForm
+    promotion_code_form_class = PromotionCodeForm
     
     primary_form_key = 'purchaser_form'
     
@@ -77,6 +111,7 @@ class CheckoutView(FormView):
         primary_form_key: form_class,
         'shipping_address_form': shipping_address_form_class,
         'credit_card_form': credit_card_form_class,
+        'promotion_code_form': promotion_code_form_class,
     }
     
     def get_related_data_forms(self, forms):
@@ -93,18 +128,29 @@ class CheckoutView(FormView):
         for form_name, form_class in forms.items():
             if form_name != self.primary_form_key:
                 related_data_forms.append(form_class)
-            
+        
         return related_data_forms
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         cart = Cart.load_from_session(self.request.session)
+        promotion = PromotionCode.load_from_session(self.request.session)
         
-        if cart is None:
+        if cart is None or cart.quantities == 0:
             context['quantities_in_cart'] = 0
+            # カートが空の場合、適用済みのプロモーションコードの情報はセッションから削除する
+            PromotionCode.delete_from_session(self.request.session)
         else:
             context['cartitems'] = CartItem.objects.select_related('item', 'cart').filter(cart_id=cart.pk)
-            context['total_price'] = cart.get_total_price()
+            
+            # プロモーションコード適用による割引額の設定
+            if promotion is None:
+                discount_amount = 0
+            else:
+                context['promotion'] = promotion
+                discount_amount = promotion.discount_amount
+            
+            context['total_price'] = cart.get_total_price(discount_amount)
             context['quantities_in_cart'] = cart.quantities
         
         for form_name, form_class in self.form_classes.items():
@@ -114,6 +160,7 @@ class CheckoutView(FormView):
     
     def forms_valid_failure(self, forms, messages_level=messages.info, message=''):
         """
+        postメソッド実行時に使用
         バリデーションエラーまたはトランザクションエラー時の処理
         """
         context = self.get_context_data(**forms)
@@ -123,6 +170,7 @@ class CheckoutView(FormView):
     
     def forms_valid_successful(self, request, forms):
         """
+        postメソッド実行時に使用
         すべてのフォームのバリデーションが通った場合の処理
         """
         # DB保存処理を記述する
@@ -148,10 +196,11 @@ class CheckoutView(FormView):
             return self.forms_valid_failure(forms, messages_level=messages_level, message=message)
     
     def post(self, request, *args, **kwargs):
-        # フォームのインスタンスを生成し、辞書に格納
+        # フォームのインスタンスを生成し、辞書に格納（ただし、PromotionCodeFormは除外）
         forms = {}
         for form_name, form_cls in self.form_classes.items():
-            forms[form_name] = form_cls(request.POST)
+            if form_cls is not PromotionCodeForm:
+                forms[form_name] = form_cls(request.POST)
 
         # バリデーションを実行
         if all(form.is_valid() for form in forms.values()):

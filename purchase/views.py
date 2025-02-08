@@ -13,6 +13,7 @@ from django.views.generic import View
 
 from cart.models import Cart
 from cart.models import CartItem
+from promotion.models import PromotionCode
 from purchase.models import Order
 from purchase.models import OrderDetail
 from purchase.models import Purchaser
@@ -29,16 +30,18 @@ class PurchaseView(View):
         # セッションからインスタンスを生成
         cart = Cart.load_from_session(request.session)
         purchaser = Purchaser.load_from_session(request.session)
+        promotion = PromotionCode.load_from_session(request.session)
         
         # インスタンスのバリデーションチェック
-        redirect_if_invalid(cart=cart, purchaser=purchaser, redirect_url='shop:item-list')
+        redirect_if_invalid(cart=cart, purchaser=purchaser, promotion=promotion)
         
         try:
             with transaction.atomic():
                 # OrderテーブルにCartテーブルの情報を保存
                 order = Order.objects.create(
                     purchaser=purchaser,
-                    total_price=cart.get_total_price(),
+                    promotion=promotion,
+                    total_price=cart.get_total_price(promotion.discount_amount),
                 )
                 
                 # OrderDetailテーブルにCartItemテーブルの情報を保存
@@ -51,9 +54,12 @@ class PurchaseView(View):
                         sub_total=cart_item.sub_total,
                     )
                 
+                # PromotionCodeテーブルの該当するレコードのis_activeフィールドをFalseに更新
+                PromotionCode.objects.filter(id=promotion.pk).update(is_active=False)
+                
                 # カートの中身を削除し、セッションからカートと購入者情報を削除
                 cart.delete()
-                delete_from_session(request.session, Cart, Purchaser)
+                delete_from_session(request.session, Cart, Purchaser, PromotionCode)
 
                 # セッションに注文情報を保存
                 Order.save_to_session(request.session, order.pk)
@@ -92,9 +98,10 @@ class OrderDetailView(DetailView):
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        # get_queryset()の返り値は、変数"order"に格納する
         order = self.object
         
-        # template_dict作成
+        # template_dict作成 （購入者関連情報）
         models = (
             order.purchaser,
             order.purchaser.shipping_address,
@@ -111,6 +118,8 @@ class OrderDetailView(DetailView):
         # その他必要な情報をcontextに追加
         context['order'] = order
         context['order_details'] = order.order_detail.all()
+        context['promotion'] = order.promotion
+        print(context['promotion'])
         return context
 
 
@@ -139,6 +148,7 @@ class SendOrderMailView(View):
         template_dict = get_template_dict(models, template_key='mail_template')
         template_dict['order'] = order
         template_dict['order_details'] = order.order_detail.all()
+        template_dict['promotion'] = order.promotion
         
         # メールテンプレート呼び出しとメール本文作成
         message_body = render_to_string(self.template_name, template_dict)

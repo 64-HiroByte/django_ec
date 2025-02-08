@@ -29,6 +29,7 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('cart/', include('cart.urls')),
     path('purchase/', include('purchase.urls')),
+    path('promotion/', include('promotion.urls')),
 ]
 
 # この設定が本当に必要なのか調べる 設定しなくても大丈夫な気がする（2024.10.20)

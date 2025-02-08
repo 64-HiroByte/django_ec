@@ -61,7 +61,7 @@ class Cart(models.Model):
         session[session_key] = cart.pk
         return cart
 
-    def get_total_price(self):
+    def get_total_price(self, discount_amount=0):
         """
         カート内の商品の小計を合算し、カート内の合計金額を返す。
 
@@ -69,7 +69,9 @@ class Cart(models.Model):
             int: カート内の商品の合計金額
         """
         cart_items = self.items.select_related('item')
-        total_price = sum(cart_item.sub_total for cart_item in cart_items)
+        total_price = sum(cart_item.sub_total for cart_item in cart_items) - discount_amount
+        if total_price < 0:
+            total_price = 0
         return total_price
     
     @property

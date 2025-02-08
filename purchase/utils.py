@@ -37,19 +37,32 @@ def save_purchase_related_data(purchaser, related_data_forms):
         related_data.save()
 
 
-def redirect_if_invalid(cart=None, purchaser=None, redirect_url=None):
+def redirect_if_invalid(cart=None, purchaser=None, promotion=None, redirect_url=None):
     """
-    カートまたは購入者がNone、またはカートの数量が0の場合、指定したURLへリダイレクトする
+    指定したURLへリダイレクトする。リダイレクトする条件は以下の通り
+        - カートインスタンスがNone、または数量が0の場合
+        - 購入者のインスタンスがNoneの場合
+        - プロモーションコードのインスタンスがNone、または使用済みである場合
     
     Args:
         cart (Cart): カートのインスタンス
         purchaser (Purchaser): 購入者のインスタンス
-        redirect_url (str): リダイレクト先のURL
+        promotion (PromotionCode): プロモーションコードのインスタンス
+        redirect_url (str): リダイレクト先のURL（Noneの場合は、'shop:item-list'）
     
     returns:
         redirect: リダイレクト先のURL
     """
-    if (cart is None or getattr(cart, 'quantities', 0) == 0) or purchaser is None:
+    # リダイレクト先
+    redirect_url = redirect_url or 'shop:item-list'
+    
+    if (cart is None or getattr(cart, 'quantities', 0) == 0):
+        return redirect(redirect_url)
+    
+    if purchaser is None:
+        return redirect(redirect_url)
+    
+    if promotion is None or not getattr(promotion, 'is_active', False):
         return redirect(redirect_url)
     return None
 
@@ -75,7 +88,7 @@ def create_dict(keys, values):
     Args:
         keys (list or tuple): 辞書のキー
         values (list or tuple):辞書の値
-        
+    
     Raises:
         ValueError: キーと値の要素の長さが一致しない場合
 
@@ -100,7 +113,7 @@ def create_information_dict(html_template_keys, mail_template_keys, values):
     Returns:
         dict: HTML, メールテンプレートで使用する情報をまとめた辞書
     """
-    html_template_dict = create_dict(html_template_keys,values)
+    html_template_dict = create_dict(html_template_keys, values)
     mail_template_dict = create_dict(mail_template_keys, values)
     information_dict = {
         'html_template': html_template_dict,
